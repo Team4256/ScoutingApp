@@ -1,2 +1,0 @@
-# ScoutingApp
-Scouting app woohoo!
