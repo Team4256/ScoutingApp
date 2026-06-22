@@ -5,7 +5,8 @@ export default function App() {
 
   return (
     <>
-      <h1>4256 Scouting</h1>
+      <h1>Scouting App</h1>
+      <h2>Team 4256</h2>
       
       <button
         type="button"
