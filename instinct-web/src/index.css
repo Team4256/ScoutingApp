@@ -99,6 +99,7 @@ code,
 .counter {
   display: block;       /* Allows centering with margin */
   margin: 0 auto;       /* Centers the button horizontally */
+  margin-block: 5px;
   padding: 20px 60px;
   font-size: 16px; 
   width: max-content;
