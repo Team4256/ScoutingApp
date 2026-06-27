@@ -97,16 +97,33 @@ p {
 
 code,
 .counter {
-  display: block;       /* Allows centering with margin */
-  margin: 0 auto;       /* Centers the button horizontally */
-  margin-block: 5px;
+  display: block;
+  margin: 5px auto;
   padding: 20px 60px;
-  font-size: 16px; 
-  width: max-content;
+
+  font-size: 16px;
   font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
+
   color: var(--text-h);
+  background: var(--bg);
+
+  border: 1px solid var(--border);
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s,
+              border-color 0.15s,
+              transform 0.1s;
+}
+
+.counter:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.counter:active {
+  transform: scale(0.98);
 }
 
 code {
@@ -114,4 +131,46 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+.input,
+.notes {
+  display: block;
+  margin: 5px auto;
+  padding: 20px 24px;
+
+  font-size: 16px;
+  font-family: var(--mono);
+
+  color: var(--text-h);
+  background: var(--bg);
+
+  border: 1px solid var(--border);
+  border-radius: 4px;
+
+  box-sizing: border-box;
+}
+
+/* Dropdown */
+
+.input {
+  width: 320px;
+  cursor: pointer;
+}
+
+/* Notes */
+
+.notes {
+  width: 420px;
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* Focus effect */
+
+.input:focus,
+.notes:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }

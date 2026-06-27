@@ -1,9 +1,9 @@
 import { db } from "./database";
 
-export async function saveMatchData(points) {
+export async function saveMatchData(match) {
     await db.matchData.put({
         id: 1,
-        points: points,
+        ...match
     })
 
 }
