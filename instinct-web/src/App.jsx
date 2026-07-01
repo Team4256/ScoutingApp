@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { saveMatchData, loadMatchData } from "./Database/databaseHandler";
+import { sendDataToServer } from "./Database/dataSender";
 
 export default function App() {
 
@@ -90,6 +91,15 @@ export default function App() {
         onClick={() => save()}
       >
         Save data in cache
+      </button>
+
+      {/* Send to server button */}
+      <button
+        type="button"
+        className="counter"
+        onClick={() => sendDataToServer(match)}
+      >
+        Send data to server
       </button>
     </>
   );
