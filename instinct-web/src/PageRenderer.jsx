@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import LoginPage from "./LoginPage";
+import AutoSetupPage from "./AutoSetupPage.jsx";
+import LoginPage from "./LoginPage.jsx";
 
 export default function PageRenderer() {
 
@@ -10,8 +11,16 @@ export default function PageRenderer() {
   }
 
   return (
-    <>
-      {currentPage === "login" && <LoginPage />}
-    </>
-  )
+        <>
+            {currentPage === "login" &&
+                <LoginPage changePage={changePage} />
+
+            }
+
+            {currentPage === "autoSetup" &&
+                <AutoSetupPage changePage={changePage} />
+
+            }
+        </>
+    );
 }

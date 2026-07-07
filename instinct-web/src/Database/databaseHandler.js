@@ -1,10 +1,10 @@
 import { db } from "./database";
 
-export async function saveMatchData(match, matchid) {
-    await db.matchData.put({
-        id: matchid,
-        ...match
-    })
+export async function saveMatchData(match) {
+    console.log(match);
+    await db.matchData.put(
+        match
+    )
 
 }
 
