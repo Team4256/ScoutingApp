@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { saveMatchData, loadMatchData } from "./Database/databaseHandler";
+import { saveMatchData, loadMatchData, loadLastMatchID } from "./Database/databaseHandler";
 import { sendDataToServer } from "./Database/dataSender";
 
-export default function App() {
+export default function LoginPage() {
 
   const [match, setMatch] = useState({
+    team: "",
     autoPoints: 0,
     teleopPoints: 0,
     climb: "None",
@@ -14,7 +15,9 @@ export default function App() {
 {/* Loads data when page first loads */}
   useEffect(() => {
     async function load(){
-      const data = await loadMatchData();
+      const lastMatchID = await loadLastMatchID();
+      console.log("Last Match ID:", lastMatchID);
+      const data = await loadMatchData(lastMatchID);
       console.log("Loaded:", data);
 
       if(data){
@@ -34,7 +37,7 @@ export default function App() {
 }
 
   async function save(){
-    await saveMatchData(match);
+    await saveMatchData(match, 1);
   }
 
   return (
@@ -42,6 +45,26 @@ export default function App() {
       {/* Headers */}
       <h1>Scouting App</h1>
       <h2>Team 4256</h2>
+
+       {/* Match info */}
+      <textarea
+        className="match-input"
+        rows={1}
+        cols={8}
+        placeholder="Match #"
+        value={match.id}
+        onChange={(e) => updateMatch("matchNumber", e.target.value)}
+      />
+      
+      {/* Team info */}
+      <textarea
+        className="team-input"
+        rows={1}
+        cols={8}
+        placeholder="Team #"
+        value={match.team}
+        onChange={(e) => updateMatch("team", e.target.value)}
+      />
       
       {/* Auto button */}
       <button
