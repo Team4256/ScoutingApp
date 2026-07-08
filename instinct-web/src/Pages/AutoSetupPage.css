@@ -1,0 +1,44 @@
+.field-container {
+    width: 700px;
+    height: 500px;
+
+    background-image: url("/images/field.png");
+    background-size: cover;
+    background-position: center;
+
+    position: relative;
+}
+
+.starting-positions {
+    position: absolute;
+
+    left: 40px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.position-box {
+    width: 70px;
+    height: 55px;
+
+    border: 2px solid white;
+    background: rgba(255,255,255,.3);
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.position-box:hover {
+    background: rgba(255,255,255,.55);
+}
+
+.position-box.selected {
+    background: #00b7ff;
+    border-color: #0088cc;
+    color: white;
+}
