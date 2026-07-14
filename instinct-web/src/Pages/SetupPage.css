@@ -1,0 +1,60 @@
+.top-banner {
+    position: sticky;
+    top: 0;
+
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #1f2028;
+    border-bottom: 2px solid #333;
+
+    z-index: 1000;
+}
+
+.top-banner h1 {
+    margin: 0;
+}
+
+.page-content {
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.alliance-button {
+    width: 220px;
+    height: 60px;
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    background:#1976d2;
+    font-size: 22px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.alliance-button.red {
+    background: #d32f2f;
+}
+
+.alliance-button.red:hover {
+    background: #b71c1c;
+}
+
+.alliance-button.blue {
+    background: #1976d2;
+}
+
+.alliance-button.blue:hover {
+    background: #0d47a1;
+}

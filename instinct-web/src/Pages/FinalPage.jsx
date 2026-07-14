@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { saveMatchData } from "../Database/databaseHandler";
 import { sendDataToServer } from "../Database/dataSender";
+import TopBanner from "../components/TopBanner.jsx";
 
 export default function AutoPage({match, setMatch, changePage}) {
 
@@ -18,6 +19,12 @@ export default function AutoPage({match, setMatch, changePage}) {
     changePage("setup");
     } 
 
+    async function handlePageTransitionBack() {
+    localStorage.setItem("lastPageOpened", "teleop");
+
+    changePage("teleop");
+    } 
+
     async function save(){
     await saveMatchData(match);
 
@@ -25,7 +32,13 @@ export default function AutoPage({match, setMatch, changePage}) {
 
     return(
     <>
-    <h1>Final Page</h1>
+    {/* Final banner */}
+      <TopBanner
+        title="Final"
+        showBack={true}
+        showNext={false}
+        onBack={handlePageTransitionBack}
+      />
 
     {/* Climb button */}
       <select

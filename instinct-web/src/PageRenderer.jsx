@@ -15,10 +15,13 @@ export default function PageRenderer() {
   const [match, setMatch] = useState({
       id: "",
       team: "",
+      alliance: "blue",
       autoPoints: 0,
       teleopPoints: 0,
+      teleopPassPoints: 0,
       climb: "None",
-      notes: ""
+      notes: "",
+      broke: "",
     })
 
     {/* Helper functions for pages */}

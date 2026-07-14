@@ -1,7 +1,9 @@
 import "./AutoSetupPage.css";
+import TopBanner from "../components/TopBanner.jsx";
 
 export default function AutoSetupPage({ match, setMatch, changePage }) {
 
+    {/* Helper functions */}
     function updateMatch(field, value) {
         setMatch(prev => ({
             ...prev,
@@ -14,37 +16,63 @@ export default function AutoSetupPage({ match, setMatch, changePage }) {
         changePage("auto");
     }
 
-    return (
-        <>
-            <h1>Auto Setup</h1>
+    async function handlePageTransitionBack() {
+    localStorage.setItem("lastPageOpened", "setup");
 
-            <div className="field-container">
-                <div className="starting-positions">
-                    {[1, 2, 3, 4, 5].map(position => (
-                        <button
-                            key={position}
-                            className={
-                                match.autoStartPosition === position
-                                    ? "position-box selected"
-                                    : "position-box"
-                            }
-                            onClick={() =>
-                                updateMatch("autoStartPosition", position)
-                            }
-                        >
-                            {position}
-                        </button>
-                    ))}
-                </div>
+    changePage("setup");
+    }
+
+    {/* Button positions */}
+    const positions = {
+        red: {
+        1: { x: 100, y: 85 },
+        2: { x: 100, y: 153.75 },
+        3: { x: 100, y: 222.5 },
+        4: { x: 100, y: 291.25 },
+        5: { x: 100, y: 360 }
+        },
+        blue: {
+        1: { x: 535, y: 85 },
+        2: { x: 535, y: 153.75 },
+        3: { x: 535, y: 222.5 },
+        4: { x: 535, y: 291.25 },
+        5: { x: 535, y: 360 }
+        }
+    };
+
+    {/* Determine which positions to use based on alliance */}
+    const currentPositions = positions[match.alliance];
+
+   return (
+    <>
+        <TopBanner
+        title="Auto Setup"
+        showBack={true}
+        showNext={true}
+        onNext={handlePageTransition}
+        onBack={handlePageTransitionBack}
+                    />
+
+        {/* Field */}
+        <main className="page-content">
+           <div className="field-container">
+                {[1,2,3,4,5].map(position => (
+                    <button
+                        key={position}
+                        className={`position-box ${
+                            match.autoStartPosition === position ? "selected" : ""
+                        }`}
+                        style={{
+                            left: `${currentPositions[position].x}px`,
+                            top: `${currentPositions[position].y}px`
+                        }}
+                        onClick={() => updateMatch("autoStartPosition", position)}
+                    >
+                        {position}
+                    </button>
+                ))}
             </div>
-
-            <button
-                type="button"
-                className="counter"
-                onClick={handlePageTransition}
-            >
-                To Auto
-            </button>
-        </>
+        </main>
+    </>
     );
 }

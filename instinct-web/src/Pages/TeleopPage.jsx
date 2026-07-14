@@ -1,44 +1,293 @@
-import { useState, useEffect } from "react";
-import { saveMatchData, loadMatchData, loadLastMatchID } from "../Database/databaseHandler";
+import { useState, useRef } from "react";
+import TopBanner from "../components/TopBanner.jsx";
+import "./TeleopPage.css";
 
-export default function TeleopPage({match, setMatch, changePage}) {
+export default function TeleopPage({ match, setMatch, changePage }) {
 
-{/* Helper functions */}
-  function updateMatch(field, value) {
-    setMatch(prev => ({
-        ...prev,
-        [field]: value
-    }));
-}
+    const hopperRef = useRef(null);
+    const [dragging, setDragging] = useState(false);
+  const [hopperPercent, setHopperPercent] = useState(0);
 
-  async function handlePageTransition() {
-    localStorage.setItem("lastPageOpened", "final");
 
-    changePage("final");
-  }
+    {/* Helper functions */}
 
-  return (
-    <>
-      {/* Headers */}
-      <h1>Teleop</h1>
+    function updateMatch(field, value) {
+        setMatch(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    }
 
-      {/* Teleop button */}
-      <button
-        type="button"
-        className="counter"
-        onClick={() => updateMatch("teleopPoints", match.teleopPoints + 1)}
-      >
-        Teleop Points: {match.teleopPoints}
-      </button>
 
-      {/* Next page button */}
-      <button
-            type="button"
-            className="counter"
-                onClick={handlePageTransition}
-            >
-                To Endgame
-            </button>
-    </>
-  );
+    {/* Hopper dragging */}
+
+    function startDragging(e) {
+        e.preventDefault();
+
+        e.currentTarget.setPointerCapture(e.pointerId);
+
+        setDragging(true);
+        updatePercent(e);
+    }
+
+
+    function stopDragging() {
+        setDragging(false);
+    }
+
+
+    function drag(e) {
+        if (!dragging) return;
+
+        updatePercent(e);
+    }
+
+
+    function updatePercent(e) {
+
+        const rect = hopperRef.current.getBoundingClientRect();
+
+        const y = e.clientY - rect.top;
+
+        let percent = 100 - (y / rect.height) * 100;
+
+        percent = Math.max(0, Math.min(100, percent));
+
+        setHopperPercent(Math.round(percent));
+    }
+
+
+    {/* Scoring */}
+
+    function score(type) {
+
+        const capacity = 50;
+
+        const scored = Math.round(
+            capacity * hopperPercent / 100
+        );
+
+
+        if (type === "shoot") {
+
+            setMatch(prev => ({
+                ...prev,
+                teleopPoints:
+                    prev.teleopPoints + scored,
+            }));
+
+            setHopperPercent(0);
+
+        }
+
+
+        if (type === "pass") {
+
+            setMatch(prev => ({
+                ...prev,
+                teleopPassPoints:
+                    prev.teleopPassPoints + scored,
+            }));
+
+            setHopperPercent(0);
+
+        }
+
+    }
+
+
+    {/* Navigation */}
+
+    function handlePageTransition() {
+
+        localStorage.setItem(
+            "lastPageOpened",
+            "final"
+        );
+
+        changePage("final");
+    }
+
+
+    function handlePageTransitionBack() {
+
+        localStorage.setItem(
+            "lastPageOpened",
+            "auto"
+        );
+
+        changePage("auto");
+    }
+
+
+
+    return (
+        <>
+
+            <TopBanner
+                title="Teleop"
+                showBack={true}
+                showNext={true}
+                onNext={handlePageTransition}
+                onBack={handlePageTransitionBack}
+            />
+
+
+            <div className="teleop-container">
+
+
+                {/* Hopper */}
+
+                <div className="hopper-section">
+
+                    <div
+                        className="hopper"
+                        ref={hopperRef}
+
+                        onPointerDown={startDragging}
+                        onPointerMove={drag}
+                        onPointerUp={stopDragging}
+                        onPointerLeave={stopDragging}
+                    >
+
+                        <div
+                            className="hopper-fill"
+                            style={{
+                                height:
+                                `${hopperPercent}%`
+                            }}
+                        />
+
+                        <div className="hopper-label">
+                            {hopperPercent}%
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                {/* Controls */}
+
+                <div className="control-section">
+
+
+                    <button
+                        className="shoot-button"
+                        onClick={() => score("shoot")}
+                    >
+                        Shoot
+                    </button>
+
+
+                    <button
+                        className="pass-button"
+                        onClick={() => score("pass")}
+                    >
+                        Pass
+                    </button>
+
+
+
+                    <div className="score-display">
+
+                        <div>
+                            Shot:
+                            {" "}
+                            {match.teleopPoints}
+                        </div>
+
+                        <div>
+                            Passed:
+                            {" "}
+                            {match.teleopPassPoints}
+                        </div>
+
+                    </div>
+
+
+
+                    <div className="adjust-buttons">
+
+
+                        <div>
+
+                            <button
+                                onClick={() =>
+                                    updateMatch(
+                                        "teleopPoints",
+                                        Math.max(
+                                            0,
+                                            match.teleopPoints - 1
+                                        )
+                                    )
+                                }
+                            >
+                                -1 Shot
+                            </button>
+
+
+                            <button
+                                onClick={() =>
+                                    updateMatch(
+                                        "teleopPoints",
+                                        Math.max(
+                                            0,
+                                            match.teleopPoints - 5
+                                        )
+                                    )
+                                }
+                            >
+                                -5 Shot
+                            </button>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <button
+                                onClick={() =>
+                                    updateMatch(
+                                        "teleopPassPoints",
+                                        Math.max(
+                                            0,
+                                            match.teleopPassPoints - 1
+                                        )
+                                    )
+                                }
+                            >
+                                -1 Pass
+                            </button>
+
+
+                            <button
+                                onClick={() =>
+                                    updateMatch(
+                                        "teleopPassPoints",
+                                        Math.max(
+                                            0,
+                                            match.teleopPassPoints - 5
+                                        )
+                                    )
+                                }
+                            >
+                                -5 Pass
+                            </button>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </>
+    );
 }

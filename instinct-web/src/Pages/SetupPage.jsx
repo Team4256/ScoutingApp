@@ -1,57 +1,76 @@
-export default function SetupPage({match, setMatch, changePage}) {
+import TopBanner from "../components/TopBanner.jsx";
+import "./SetupPage.css"
 
+export default function SetupPage({ match, setMatch, changePage }) {
 
-  {/* Helper functions */}
-  function updateMatch(field, value) {
-    setMatch(prev => ({
-        ...prev,
-        [field]: value
-    }));
+    function updateMatch(field, value) {
+        setMatch(prev => ({
+            ...prev,
+            [field]: value
+        }));
     }
 
-  async function handlePageTransition() {
-    localStorage.setItem("matchID", match.id);
-    localStorage.setItem("lastPageOpened", "autoSetup");
+    function toggleAlliance() {
+        updateMatch(
+            "alliance",
+            match.alliance === "red" ? "blue" : "red"
+        );
+    }
 
-    changePage("autoSetup");
-  }
+    async function handlePageTransition() {
+        localStorage.setItem("matchID", match.id);
+        localStorage.setItem("lastPageOpened", "autoSetup");
 
+        changePage("autoSetup");
+    }
 
     return (
         <>
-          {/* Titles */}
-            <h1>Scouting App</h1>
-            <h2>Setup Page</h2>
+               <TopBanner
+                title="Setup"
+                showBack={false}
+                showNext={true}
+                onNext={handlePageTransition}
+            />
 
-          {/* Match info */}
-          <textarea
-            className="match-input"
-            rows={1}
-            cols={8}
-            placeholder="Match #"
-            value={match.id}
-            onChange={(e) => updateMatch("id", Number(e.target.value))}
-          />
-      
-          {/* Team info */}
-          <textarea
-            className="team-input"
-            rows={1}
-            cols={8}
-            placeholder="Team #"
-            value={match.team}
-            onChange={(e) => updateMatch("team", e.target.value)}
-          />
+            <main className="page-content">
 
+                <input
+                className="match-input"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={match.id}
+                placeholder="Match #"
+                onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    updateMatch("id", value);
+                }}
+            />
 
-          {/* Next page button */}
-            <button
-            type="button"
-            className="counter"
-            onClick={handlePageTransition}
-            >
-                Start Scouting
-            </button>
+                <input
+                className="match-input"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={match.team}
+                placeholder="Team #"
+                onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    updateMatch("team", value);
+                }}
+            />
+
+                <button
+                    className={`alliance-button ${match.alliance}`}
+                    onClick={toggleAlliance}
+                >
+                    {match.alliance === "red"
+                        ? "🔴 Red Alliance"
+                        : "🔵 Blue Alliance"}
+                </button>
+
+            </main>
         </>
     );
 }

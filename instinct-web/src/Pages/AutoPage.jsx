@@ -1,10 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { saveMatchData, loadMatchData, loadLastMatchID } from "../Database/databaseHandler";
 import { sendDataToServer } from "../Database/dataSender";
+import TopBanner from "../components/TopBanner.jsx";
+import "./AutoPage.css";
 
 export default function AutoPage({match, setMatch, changePage}) {
 
+  const hopperRef = useRef(null);
+  const [dragging, setDragging] = useState(false);
+  const [hopperPercent, setHopperPercent] = useState(0);
+
     {/* Helper functions */}
+
+  function startDragging(e){
+    setDragging(true);
+    updatePercent(e);
+    
+  }
+
+  function stopDragging(){
+    setDragging(false);
+}
+
+function drag(e){
+    if(!dragging) return;
+
+    updatePercent(e);
+}
+
+function updatePercent(e){
+
+    const rect = hopperRef.current.getBoundingClientRect();
+
+    const y = e.clientY - rect.top;
+
+    let percent = 100 - (y / rect.height) * 100;
+
+    percent = Math.max(0, Math.min(100, percent));
+
+    setHopperPercent(Math.round(percent));
+}
+
+
   function updateMatch(field, value) {
     setMatch(prev => ({
         ...prev,
@@ -18,27 +55,106 @@ export default function AutoPage({match, setMatch, changePage}) {
     changePage("teleop");
     }
 
+    async function handlePageTransitionBack() {
+    localStorage.setItem("lastPageOpened", "autoSetup");
+
+    changePage("autoSetup");
+    }
+
     return(
     <>
-        <h1>Auto Page</h1>
+      {/* Auto banner */}
+      <TopBanner
+        title="Auto"
+        showBack={true}
+        showNext={true}
+        onNext={handlePageTransition}
+        onBack={handlePageTransitionBack}
+      />
 
-         {/* Auto button */}
-      <button
-        type="button"
-        className="counter"
-        onClick={() => updateMatch("autoPoints", match.autoPoints + 1)}
+      {/* Auto button */}
+     <div className="auto-container">
+
+    <div className="hopper-section">
+
+        <div
+          className="hopper"
+          ref={hopperRef}
+          onPointerDown={startDragging}
+          onPointerMove={drag}
+          onPointerUp={stopDragging}
+          onPointerLeave={stopDragging}
       >
-        Auto Points: {match.autoPoints}
-      </button>
+          <div
+              className="hopper-fill"
+              style={{
+                  height: `${hopperPercent}%`
+              }}
+          />
 
-    {/* Next page button */}
+          <div className="hopper-percent">
+              {hopperPercent}%
+          </div>
+      </div>
+
+    </div>
+
+    <div className="shoot-section">
+
         <button
-        type="button"
-        className="counter"
-        onClick={handlePageTransition}
+            className="shoot-button"
+            onClick={() => {
+                const capacity = 50;
+
+                const scored = Math.round(
+                    capacity * hopperPercent / 100
+                );
+
+                setMatch(prev => ({
+                    ...prev,
+                    autoPoints: prev.autoPoints + scored,
+                }));
+                setHopperPercent(0);
+            }}
         >
-        To Teleop
+            Shoot
         </button>
-    </>
+
+        <div className="auto-points">
+            Auto Shots: {match.autoPoints}
+        </div>
+
+        <div className="adjust-buttons">
+
+        <button
+            className="adjust-button"
+            onClick={() =>
+                updateMatch(
+                    "autoPoints",
+                    Math.max(0, match.autoPoints - 1)
+                )
+            }
+        >
+            -1
+        </button>
+
+        <button
+            className="adjust-button"
+            onClick={() =>
+                updateMatch(
+                    "autoPoints",
+                    Math.max(0, match.autoPoints - 5)
+                )
+            }
+        >
+            -5
+        </button>
+
+    </div>
+
+    </div>
+
+</div>
+</>
     );
 }

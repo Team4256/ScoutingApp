@@ -14,6 +14,6 @@ export async function loadMatchData(matchid) {
 }
 
 export async function loadLastMatchID() {
-    return await db.matchData.orderBy("id").last().then(lastMatch => lastMatch ? lastMatch.id : 0);
+    
 
-}
+} 
