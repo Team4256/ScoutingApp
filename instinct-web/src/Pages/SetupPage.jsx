@@ -44,7 +44,7 @@ export default function SetupPage({ match, setMatch, changePage }) {
                 placeholder="Match #"
                 onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, "");
-                    updateMatch("id", value);
+                    updateMatch("id", Number(value));
                 }}
             />
 

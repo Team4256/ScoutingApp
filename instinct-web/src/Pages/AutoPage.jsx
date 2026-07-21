@@ -7,26 +7,24 @@ import "./AutoPage.css";
 export default function AutoPage({match, setMatch, changePage}) {
 
   const hopperRef = useRef(null);
-  const [dragging, setDragging] = useState(false);
+  const dragging = useRef(false);
   const [hopperPercent, setHopperPercent] = useState(0);
 
     {/* Helper functions */}
 
-  function startDragging(e){
-    setDragging(true);
-    updatePercent(e);
-    
-  }
+    function startDragging(e) {
+        dragging.current = true;
+        updatePercent(e);
+    }
 
-  function stopDragging(){
-    setDragging(false);
-}
+    function stopDragging() {
+        dragging.current = false;
+    }
 
-function drag(e){
-    if(!dragging) return;
-
-    updatePercent(e);
-}
+    function drag(e) {
+        if (!dragging.current) return;
+        updatePercent(e);
+    }
 
 function updatePercent(e){
 
@@ -86,11 +84,11 @@ function updatePercent(e){
           onPointerLeave={stopDragging}
       >
           <div
-              className="hopper-fill"
-              style={{
-                  height: `${hopperPercent}%`
-              }}
-          />
+            className="hopper-fill"
+            style={{
+                transform: `translateY(${100 - hopperPercent}%)`
+                }}
+            />
 
           <div className="hopper-percent">
               {hopperPercent}%

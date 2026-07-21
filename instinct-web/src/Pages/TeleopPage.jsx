@@ -5,8 +5,8 @@ import "./TeleopPage.css";
 export default function TeleopPage({ match, setMatch, changePage }) {
 
     const hopperRef = useRef(null);
-    const [dragging, setDragging] = useState(false);
-  const [hopperPercent, setHopperPercent] = useState(0);
+    const dragging = useRef(false);
+    const [hopperPercent, setHopperPercent] = useState(0);
 
 
     {/* Helper functions */}
@@ -21,25 +21,21 @@ export default function TeleopPage({ match, setMatch, changePage }) {
 
     {/* Hopper dragging */}
 
-    function startDragging(e) {
-        e.preventDefault();
-
-        e.currentTarget.setPointerCapture(e.pointerId);
-
-        setDragging(true);
+   function startDragging(e) {
+        dragging.current = true;
         updatePercent(e);
-    }
 
+    }
 
     function stopDragging() {
-        setDragging(false);
+        dragging.current = false;
+
     }
 
-
     function drag(e) {
-        if (!dragging) return;
-
+        if (!dragging.current) return;
         updatePercent(e);
+
     }
 
 
@@ -153,9 +149,8 @@ export default function TeleopPage({ match, setMatch, changePage }) {
                         <div
                             className="hopper-fill"
                             style={{
-                                height:
-                                `${hopperPercent}%`
-                            }}
+                                transform: `translateY(${100 - hopperPercent}%)`
+                                }}
                         />
 
                         <div className="hopper-label">

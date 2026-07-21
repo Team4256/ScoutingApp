@@ -36,6 +36,7 @@ export default function PageRenderer() {
       async function load(){
 
         const data = await loadMatchData(Number(localStorage.getItem("matchID")));
+        console.log("Test:", await loadMatchData(2));
         console.log("Loaded:", data);
   
         if(data){
