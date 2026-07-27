@@ -18,7 +18,7 @@ export default function SetupPage({ match, setMatch, changePage }) {
     }
 
     async function handlePageTransition() {
-        localStorage.setItem("matchID", match.id);
+        localStorage.setItem("matchID", match.matchID);
         localStorage.setItem("lastPageOpened", "autoSetup");
 
         changePage("autoSetup");
@@ -40,11 +40,11 @@ export default function SetupPage({ match, setMatch, changePage }) {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                value={match.id}
+                value={match.matchID}
                 placeholder="Match #"
                 onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, "");
-                    updateMatch("id", Number(value));
+                    updateMatch("matchID", Number(value));
                 }}
             />
 

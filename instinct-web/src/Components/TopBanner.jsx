@@ -15,7 +15,7 @@ export default function TopBanner({
        <header className="top-banner">
 
             {showBack && (
-                <button className="nav-button back-button" onClick={onBack}>
+                <button className="nav-button topBack-button" onClick={onBack}>
                     ← Back
                 </button>
             )}
@@ -23,7 +23,7 @@ export default function TopBanner({
             <h1>{title}</h1>
 
             {showNext && (
-                <button className="nav-button next-button" onClick={onNext}>
+                <button className="nav-button topNext-button" onClick={onNext}>
                     Next →
                 </button>
             )}

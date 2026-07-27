@@ -38,11 +38,11 @@
     transition: .2s;
 }
 
-.back-button {
+.topBack-button {
     left: 25px;
 }
 
-.next-button {
+.topNext-button {
     right: 25px;
 }
 

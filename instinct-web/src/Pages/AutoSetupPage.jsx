@@ -1,4 +1,5 @@
 import "./AutoSetupPage.css";
+import { useState } from "react";
 import TopBanner from "../components/TopBanner.jsx";
 
 export default function AutoSetupPage({ match, setMatch, changePage }) {
@@ -43,6 +44,9 @@ export default function AutoSetupPage({ match, setMatch, changePage }) {
     {/* Determine which positions to use based on alliance */}
     const currentPositions = positions[match.alliance];
 
+    const fieldFlipped =
+        localStorage.getItem("fieldFlipped") === "true";
+
    return (
     <>
         <TopBanner
@@ -51,26 +55,41 @@ export default function AutoSetupPage({ match, setMatch, changePage }) {
         showNext={true}
         onNext={handlePageTransition}
         onBack={handlePageTransitionBack}
-                    />
+    />
 
         {/* Field */}
         <main className="page-content">
-           <div className="field-container">
-                {[1,2,3,4,5].map(position => (
-                    <button
-                        key={position}
-                        className={`position-box ${
-                            match.autoStartPosition === position ? "selected" : ""
-                        }`}
-                        style={{
-                            left: `${currentPositions[position].x}px`,
-                            top: `${currentPositions[position].y}px`
-                        }}
-                        onClick={() => updateMatch("autoStartPosition", position)}
-                    >
-                        {position}
-                    </button>
-                ))}
+            <div
+                className={`field-container ${
+                    fieldFlipped ? "field-flipped" : ""
+                }`}
+            >
+                <div className="field-content">
+
+                    {[1, 2, 3, 4, 5].map(position => (
+                        <button
+                            key={position}
+                            className={`position-box ${
+                                match.autoStartPosition === position
+                                    ? "selected"
+                                    : ""
+                            }`}
+                            style={{
+                                left: `${currentPositions[position].x}px`,
+                                top: `${currentPositions[position].y}px`
+                            }}
+                            onClick={() =>
+                                updateMatch(
+                                    "autoStartPosition",
+                                    position
+                                )
+                            }
+                        >
+                            {position}
+                        </button>
+                    ))}
+
+                </div>
             </div>
         </main>
     </>

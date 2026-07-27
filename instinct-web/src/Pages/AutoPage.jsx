@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { saveMatchData, loadMatchData, loadLastMatchID } from "../Database/databaseHandler";
+import { saveMatchData, loadMatchData} from "../Database/databaseHandler";
 import { sendDataToServer } from "../Database/dataSender";
 import TopBanner from "../components/TopBanner.jsx";
 import "./AutoPage.css";
