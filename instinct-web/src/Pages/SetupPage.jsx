@@ -1,4 +1,4 @@
-import TopBanner from "../components/TopBanner.jsx";
+import TopBanner from "../Components/TopBanner.jsx";
 import "./SetupPage.css"
 
 export default function SetupPage({ match, setMatch, changePage }) {
@@ -44,7 +44,7 @@ export default function SetupPage({ match, setMatch, changePage }) {
                 placeholder="Match #"
                 onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, "");
-                    updateMatch("matchID", Number(value));
+                    updateMatch("matchID", value);
                 }}
             />
 

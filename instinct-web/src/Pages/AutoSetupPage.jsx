@@ -1,6 +1,6 @@
 import "./AutoSetupPage.css";
 import { useState } from "react";
-import TopBanner from "../components/TopBanner.jsx";
+import TopBanner from "../Components/TopBanner.jsx";
 
 export default function AutoSetupPage({ match, setMatch, changePage }) {
 

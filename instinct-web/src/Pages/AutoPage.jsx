@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { saveMatchData, loadMatchData} from "../Database/databaseHandler";
 import { sendDataToServer } from "../Database/dataSender";
-import TopBanner from "../components/TopBanner.jsx";
+import TopBanner from "../Components/TopBanner.jsx";
 import "./AutoPage.css";
 
 export default function AutoPage({match, setMatch, changePage}) {
@@ -146,6 +146,18 @@ function updatePercent(e){
             }
         >
             -5
+        </button>
+
+        <button
+            className={`trench-button ${match.trench}`}
+            onClick={() =>
+                updateMatch(
+                    "trench",
+                    match.trench === "true" ? "false" : "true"
+                )
+            }
+        >
+            Trench?
         </button>
 
     </div>

@@ -46,12 +46,15 @@ export default function GlobalMenu({
     const defaultMatch = {
         id: "",
         team: "",
+        matchID: "",
+        autoStartPosition: "",
         alliance: localStorage.getItem("defaultAlliance") || "blue",
         autoPoints: 0,
         teleopPoints: 0,
         teleopPassPoints: 0,
         climb: "None",
         notes: "",
+        trench: false,
         broke: "",
     };
 
@@ -145,6 +148,7 @@ export default function GlobalMenu({
             teleopPassPoints: selectedMatch.teleopPassPoints,
             climb: selectedMatch.climb,
             notes: selectedMatch.notes,
+            trench: selectedMatch.trench,
             broke: selectedMatch.broke
         });
 
@@ -162,14 +166,6 @@ export default function GlobalMenu({
     async function handleDeleteMatch() {
 
         if (!selectedMatch) {
-            return;
-        }
-
-        const confirmed = window.confirm(
-            `Delete Match ${selectedMatch.matchID} for Team ${selectedMatch.team}?`
-        );
-
-        if (!confirmed) {
             return;
         }
 
@@ -247,10 +243,6 @@ export default function GlobalMenu({
 
             if (matches.length === 0) {
 
-                alert(
-                    "There are no matches waiting to be exported."
-                );
-
                 return;
 
             }
@@ -276,20 +268,11 @@ export default function GlobalMenu({
 
             setUnexportedCount(0);
 
-            alert(
-                `${matches.length} match(es) exported successfully.`
-            );
-
-
         } catch (error) {
 
             console.error(
                 "Error exporting matches:",
                 error
-            );
-
-            alert(
-                "There was an error exporting the matches."
             );
 
         }

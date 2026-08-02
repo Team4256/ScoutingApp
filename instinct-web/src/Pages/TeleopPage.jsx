@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import TopBanner from "../components/TopBanner.jsx";
+import TopBanner from "../Components/TopBanner.jsx";
 import "./TeleopPage.css";
 
 export default function TeleopPage({ match, setMatch, changePage }) {

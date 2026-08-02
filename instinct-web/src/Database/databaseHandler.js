@@ -32,6 +32,7 @@ export async function updateCurrentMatch(match) {
                 teleopPassPoints: match.teleopPassPoints,
                 climb: match.climb,
                 notes: match.notes,
+                trench: match.trench,
                 broke: match.broke,
                 autoStartPosition: match.autoStartPosition
             });

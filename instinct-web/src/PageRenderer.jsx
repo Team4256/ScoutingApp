@@ -24,6 +24,7 @@ export default function PageRenderer() {
       climb: "None",
       notes: "",
       broke: "",
+      trench: "false",
       exported: false
     })
 

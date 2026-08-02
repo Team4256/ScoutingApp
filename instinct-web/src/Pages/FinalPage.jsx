@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { saveMatchData } from "../Database/databaseHandler";
 import { sendDataToServer } from "../Database/dataSender";
-import TopBanner from "../components/TopBanner.jsx";
+import TopBanner from "../Components/TopBanner.jsx";
 import "./FinalPage.css";
 
 export default function FinalPage({ match, setMatch, changePage }) {

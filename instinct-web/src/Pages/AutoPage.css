@@ -135,3 +135,49 @@
 .adjust-button:hover{
     background:#b92f2f;
 }
+
+.trench-button.false{
+    width:120px;
+    height:57px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#d14343;
+
+    color:white;
+
+    font-size:20px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.trench-button.false:hover{
+    background:#b92f2f;
+}
+
+.trench-button.true{
+    width:120px;
+    height:57px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#43d15b;
+
+    color:white;
+
+    font-size:20px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.trench-button.true:hover{
+    background:#2fb946;
+}
