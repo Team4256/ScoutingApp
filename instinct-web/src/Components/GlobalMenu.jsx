@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-    loadAllMatchData,
-    deleteMatch,
-    loadUnexportedMatches,
-    markMatchesAsExported
-} from "../Database/databaseHandler";
+import { loadAllMatchData, deleteMatch, loadUnexportedMatches, markMatchesAsExported} from "../Database/databaseHandler";
+
+import QRCodeDisplay from "./QRCodeDisplay.jsx";
 
 import { sendDataToServer } from "../Database/dataSender";
 
@@ -24,18 +21,13 @@ export default function GlobalMenu({
 
     const [unexportedCount, setUnexportedCount] = useState(0);
 
-    const [scoutName, setScoutName] = useState(
-        localStorage.getItem("scoutName") || ""
-    );
+    const [scoutName, setScoutName] = useState(localStorage.getItem("scoutName") || "");
 
-    const [defaultAlliance, setDefaultAlliance] = useState(
-        localStorage.getItem("defaultAlliance") || "blue"
-    );
+    const [defaultAlliance, setDefaultAlliance] = useState(localStorage.getItem("defaultAlliance") || "blue");
 
-    const [fieldFlipped, setFieldFlipped] = useState(
-        localStorage.getItem("fieldFlipped") === "true"
-    );
+    const [fieldFlipped, setFieldFlipped] = useState(localStorage.getItem("fieldFlipped") === "true");
 
+    const [showQRCode, setShowQRCode] = useState(false);
 
     /*
     ========================================
@@ -372,7 +364,7 @@ export default function GlobalMenu({
                                         )
                                     }
                                 >
-                                    📋 Saved Matches
+                                    Saved Matches
                                 </button>
 
 
@@ -383,7 +375,7 @@ export default function GlobalMenu({
                                         openExportMenu
                                     }
                                 >
-                                    📤 Export Matches
+                                    Export Matches
                                     {unexportedCount > 0 &&
                                         ` (${unexportedCount})`
                                     }
@@ -399,7 +391,7 @@ export default function GlobalMenu({
                                         )
                                     }
                                 >
-                                    ⚙️ Settings
+                                    Settings
                                 </button>
 
 
@@ -412,7 +404,7 @@ export default function GlobalMenu({
                                         )
                                     }
                                 >
-                                    🔄 Reset Current Match
+                                    Reset Current Match
                                 </button>
 
                             </div>
@@ -502,8 +494,8 @@ export default function GlobalMenu({
 
                                             <span>
                                                 {savedMatch.exported
-                                                    ? "✓ Exported"
-                                                    : "⏳ Not Exported"
+                                                    ? "Exported"
+                                                    : "Not Exported"
                                                 }
                                             </span>
 
@@ -594,24 +586,16 @@ export default function GlobalMenu({
 
 
                                 <button
-                                    onClick={() =>
-                                        console.log(
-                                            "USB export"
-                                        )
-                                    }
+                                    onClick={() => console.log("USB export")}
                                 >
-                                    🔌 Sync with USB
+                                    Sync with USB
                                 </button>
 
 
                                 <button
-                                    onClick={() =>
-                                        console.log(
-                                            "QR export"
-                                        )
-                                    }
+                                    onClick={() => setShowQRCode(true)}
                                 >
-                                    📱 Generate QR Code
+                                    Generate QR Code
                                 </button>
 
 
@@ -620,7 +604,7 @@ export default function GlobalMenu({
                                         exportToServer
                                     }
                                 >
-                                    📡 Link to Server
+                                    Link to Server
                                     <br />
                                     (WiFi required)
                                 </button>
@@ -806,6 +790,14 @@ export default function GlobalMenu({
 
                         </>
 
+                    )}
+
+                    {showQRCode && (
+                        <QRCodeDisplay
+                            onClose={() =>
+                                setShowQRCode(false)
+                            }
+                        />
                     )}
 
                 </div>
