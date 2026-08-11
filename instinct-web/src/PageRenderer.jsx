@@ -7,25 +7,48 @@ import FinalPage from "./Pages/FinalPage.jsx";
 import TeleopPage from "./Pages/TeleopPage.jsx";
 import GlobalMenu from "./Components/GlobalMenu.jsx";
 
+import AllianceSetupPage from "./Pages/Alliance/AllianceSetup.jsx";
+import PitSetupPage from "./Pages/Pit/PitSetup.jsx";
+
 export default function PageRenderer() {
 
   {/* Variables for pages */}
 
-  const [currentPage, setCurrentPage] = useState(localStorage.getItem("lastPageOpened") || "setup");
+    const [currentPage, setCurrentPage] = useState(localStorage.getItem("lastPageOpened") || "setup");
 
-  const [match, setMatch] = useState({
-      matchID: "",
-      team: "",
-      alliance: localStorage.getItem("defaultAlliance") || "blue",
-      autoPoints: 0,
-      autoStartPosition: 0,
-      teleopPoints: 0,
-      teleopPassPoints: 0,
-      climb: "None",
-      notes: "",
-      broke: "",
-      trench: "false",
-      exported: false
+    const [match, setMatch] = useState({
+        matchID: "",
+        team: "",
+        alliance: localStorage.getItem("defaultAlliance") || "blue",
+
+        autoPoints: 0,
+        autoStartPosition: 0,
+        teleopPoints: 0,
+        teleopPassPoints: 0,
+
+        climb: "None",
+        notes: "",
+        broke: "",
+        trench: "false",
+        exported: false
+    })
+
+    const [allianceData, setAllianceData] = useState({
+        matchID: "",
+        teams: [
+            {
+                team: "",
+                notes: ""
+            },
+            {
+                team: "",
+                notes: ""
+            },
+            {
+                team: "",
+                notes: ""
+            }
+        ]
     })
 
     {/* Helper functions for pages */}
@@ -100,19 +123,18 @@ export default function PageRenderer() {
 
   }, []);
 
-
-
   return (
         <>
-            {currentPage === "setup" &&
-                <SetupPage changePage={changePage}
+            {currentPage === "setup" && localStorage.getItem("scoutingMode") === "team" &&
+                <SetupPage 
+                changePage={changePage}
                 match={match}
                 setMatch={setMatch}
                 />
 
             }
 
-            {currentPage === "autoSetup" &&
+            {currentPage === "autoSetup" && localStorage.getItem("scoutingMode") === "team" &&
                 <AutoSetupPage 
                 changePage={changePage} 
                 match={match}
@@ -121,7 +143,7 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "auto" &&
+            {currentPage === "auto" && localStorage.getItem("scoutingMode") === "team" &&
                 <AutoPage 
                 changePage={changePage} 
                 match={match}
@@ -130,7 +152,7 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "teleop" &&
+            {currentPage === "teleop" && localStorage.getItem("scoutingMode") === "team" &&
                 <TeleopPage 
                 changePage={changePage} 
                 match={match}
@@ -139,13 +161,26 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "final" &&
+            {currentPage === "final" && localStorage.getItem("scoutingMode") === "team" &&
                 <FinalPage 
                 changePage={changePage} 
                 match={match}
                 setMatch={setMatch}
                 />
             }
+
+            {localStorage.getItem("scoutingMode") === "alliance" &&
+                <AllianceSetupPage
+                allianceData={allianceData}
+                setAllianceData={setAllianceData}
+                />
+            }
+
+            {localStorage.getItem("scoutingMode") === "pit" &&
+                <PitSetupPage
+                />
+            }
+
 
             <GlobalMenu
               match={match}

@@ -10,6 +10,73 @@ export async function saveMatchData(match) {
 
 }
 
+/* Alliance scouting */
+
+export async function saveAllianceData(
+    alliance
+) {
+
+    return await db.allianceData.add({
+
+        ...alliance,
+
+        exported: false
+
+    });
+
+}
+
+
+export async function loadAllAllianceData() {
+
+    return await db
+        .allianceData
+        .toArray();
+
+}
+
+
+export async function loadUnexportedAllianceData() {
+
+    const alliances =
+        await db.allianceData.toArray();
+
+    return alliances.filter(
+        alliance => alliance.exported === false
+    );
+
+}
+
+
+export async function markAllianceAsExported(
+    databaseIDs
+) {
+
+    await db.transaction(
+        "rw",
+        db.allianceData,
+
+        async () => {
+
+            for (
+                const databaseID
+                of databaseIDs
+            ) {
+
+                await db.allianceData.update(
+                    databaseID,
+                    {
+                        exported: true
+                    }
+                );
+
+            }
+
+        }
+    );
+
+}
+
 export async function updateCurrentMatch(match) {
     const matchID = Number(localStorage.getItem("matchID"));
 

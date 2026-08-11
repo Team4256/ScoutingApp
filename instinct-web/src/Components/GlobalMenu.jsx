@@ -29,6 +29,8 @@ export default function GlobalMenu({
 
     const [showQRCode, setShowQRCode] = useState(false);
 
+    const [scoutingMode, setScoutingMode] = useState(localStorage.getItem("scoutingMode") || "team");
+
     /*
     ========================================
     Current Match Defaults
@@ -51,11 +53,7 @@ export default function GlobalMenu({
     };
 
 
-    /*
-    ========================================
-    Open / Close Menu
-    ========================================
-    */
+    /* Open & close menu */
 
     function openMenu() {
 
@@ -219,58 +217,6 @@ export default function GlobalMenu({
 
     }
 
-
-    /*
-    ========================================
-    Link To Server
-    ========================================
-    */
-
-    async function exportToServer() {
-
-        try {
-
-            const matches =
-                await loadUnexportedMatches();
-
-            if (matches.length === 0) {
-
-                return;
-
-            }
-
-
-            for (const match of matches) {
-
-                await sendDataToServer(match);
-
-            }
-
-
-            const databaseIDs =
-                matches.map(
-                    match => match.databaseID
-                );
-
-
-            await markMatchesAsExported(
-                databaseIDs
-            );
-
-
-            setUnexportedCount(0);
-
-        } catch (error) {
-
-            console.error(
-                "Error exporting matches:",
-                error
-            );
-
-        }
-
-    }
-
     /*
     ========================================
     Settings Functions
@@ -296,6 +242,17 @@ export default function GlobalMenu({
             newValue
         );
     }
+
+    function updateScoutingMode(mode) {
+
+    localStorage.setItem(
+        "scoutingMode",
+        mode
+    );
+
+    setScoutingMode(mode);
+
+}
 
 
     /*
@@ -584,31 +541,12 @@ export default function GlobalMenu({
 
                                 </p>
 
-
-                                <button
-                                    onClick={() => console.log("USB export")}
-                                >
-                                    Sync with USB
-                                </button>
-
-
                                 <button
                                     onClick={() => setShowQRCode(true)}
                                 >
                                     Generate QR Code
                                 </button>
-
-
-                                <button
-                                    onClick={
-                                        exportToServer
-                                    }
-                                >
-                                    Link to Server
-                                    <br />
-                                    (WiFi required)
-                                </button>
-
+                
                             </div>
 
                         </>
@@ -656,7 +594,7 @@ export default function GlobalMenu({
                                 {/* Scout Name */}
 
                                 <label className="settings-label">
-                                    Scout Name
+                                    Scout Name: {""}
                                 </label>
 
                                 <input
@@ -673,7 +611,7 @@ export default function GlobalMenu({
                                 {/* Default Alliance */}
 
                                 <label className="settings-label">
-                                    Default Alliance
+                                  {" "}  Default Alliance
                                 </label>
 
                                 <div className="alliance-toggle">
@@ -717,11 +655,32 @@ export default function GlobalMenu({
                                     className="orientation-button"
                                     onClick={toggleFieldOrientation}
                                 >
-                                    {fieldFlipped
-                                        ? "🔄 Using Flipped Field"
-                                        : "🔄 Using Normal Field"
-                                    }
+                                    {fieldFlipped ? "Flipped Field" : "Normal Field" }
                                 </button>
+
+                                <label className="settings-label">
+                                    Scouting Mode: {" "}
+                                </label>
+
+                                <select
+                                    className="settings-input"
+                                    value={scoutingMode}
+                                    onChange={(e) =>
+                                        updateScoutingMode(e.target.value)
+                                    }
+                                >
+                                    <option value="team">
+                                        Team Scouting
+                                    </option>
+
+                                    <option value="alliance">
+                                        Alliance Scouting
+                                    </option>
+
+                                    <option value="pit">
+                                        Pit Scouting
+                                    </option>
+                                </select>
 
                             </div>
 

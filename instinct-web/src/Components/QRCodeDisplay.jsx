@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-import { loadUnexportedMatches } from "../Database/databaseHandler";
+import { loadUnexportedMatches, loadUnexportedAllianceData } from "../Database/databaseHandler";
 import "./QRCodeDisplay.css";
 
 export default function QRCodeDisplay({ onClose }) {
@@ -9,34 +9,116 @@ export default function QRCodeDisplay({ onClose }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-
         async function loadData() {
 
             try {
 
-                const matches = await loadUnexportedMatches();
+                const individualMatches =
+                    await loadUnexportedMatches();
 
-                // Only include the first 10 unexported matches
-                const matchesToSend = matches.slice(0, 10);
 
-                if (matchesToSend.length === 0) {
-                    alert("There are no unexported matches.");
+                const allianceMatches =
+                    await loadUnexportedAllianceData();
+
+
+                /*
+                ========================================
+                Maximum of 10 total records
+                ========================================
+                */
+
+                const individual =
+                    individualMatches.map(
+                        match => ({
+
+                            type: "individual",
+
+                            data: match
+
+                        })
+                    );
+
+
+                const alliance =
+                    allianceMatches.map(
+                        alliance => ({
+
+                            type: "alliance",
+
+                            data: alliance
+
+                        })
+                    );
+
+
+                const combined = [
+
+                    ...individual,
+
+                    ...alliance
+
+                ];
+
+
+                const dataToSend =
+                    combined.slice(0, 10);
+
+
+                if (
+                    dataToSend.length === 0
+                ) {
+
+                    alert(
+                        "There are no unexported matches."
+                    );
+
                     onClose();
+
                     return;
+
                 }
 
+
+                /*
+                ========================================
+                QR payload
+                ========================================
+                */
+
+                const qrPayload = {
+
+                    type:
+                        "scouting-data",
+
+                    version:
+                        1,
+
+                    records:
+                        dataToSend
+
+                };
+
+
                 setQrData(
-                    JSON.stringify(matchesToSend)
+                    JSON.stringify(
+                        qrPayload
+                    )
                 );
+
 
             } catch (error) {
 
                 console.error(
-                    "Error loading matches for QR code:",
+                    "Error loading data for QR code:",
                     error
                 );
 
-                alert("Failed to create QR code.");
+
+                alert(
+                    "Failed to create QR code."
+                );
+
+
                 onClose();
 
             } finally {
@@ -46,6 +128,7 @@ export default function QRCodeDisplay({ onClose }) {
             }
 
         }
+
 
         loadData();
 
