@@ -6,14 +6,7 @@ export default function AllianceSetup({
     setAllianceData
 }) {
 
-
-    console.log("Alliance data:", allianceData);
-console.log("Set alliance data:", setAllianceData);
-    /*
-    ========================================
-    Update Match Number
-    ========================================
-    */
+    /* Update match number*/
 
     function updateMatchID(value) {
 
@@ -25,33 +18,14 @@ console.log("Set alliance data:", setAllianceData);
     }
 
 
-    /*
-    ========================================
-    Update Team Number
-    ========================================
-    */
+    /* Update team number */
 
     function updateTeam(index, value) {
+        const updatedTeams = [...allianceData.teams];
 
-        const updatedTeams =
-            [...allianceData.teams];
+        updatedTeams[index] = {...updatedTeams[index], team: value};
 
-        updatedTeams[index] = {
-
-            ...updatedTeams[index],
-
-            team: value
-
-        };
-
-
-        setAllianceData({
-
-            ...allianceData,
-
-            teams: updatedTeams
-
-        });
+        setAllianceData({...allianceData, teams: updatedTeams});
 
     }
 
