@@ -62,11 +62,8 @@ export default function GlobalMenu({
     const [showQRCode, setShowQRCode] =
         useState(false);
 
-    const [scoutingMode, setScoutingMode] =
-        useState(
-            localStorage.getItem("scoutingMode") || "team"
-        );
-
+    const [scoutingMode, setScoutingMode] = useState(localStorage.getItem("scoutingMode") || "team");
+    localStorage.setItem("scoutingMode", scoutingMode);
 
     /*
     ========================================

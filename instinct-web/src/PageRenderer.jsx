@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { saveMatchData, loadMatchData, updateCurrentMatch, loadMatchDataByMatchID, debugAllMatches } from "./Database/databaseHandler";
+import { saveMatchData, loadMatchData, loadMatchDataByMatchID, debugAllMatches } from "./Database/databaseHandler";
 import AutoSetupPage from "./Pages/AutoSetupPage.jsx";
 import SetupPage from "./Pages/SetupPage.jsx";
 import AutoPage from "./Pages/AutoPage.jsx";
@@ -66,7 +66,6 @@ export default function PageRenderer() {
 
    function changePage(page) {
     setCurrentPage(page);
-    //updateCurrentMatch(match);
     console.log("Changed page!")
 
   }
@@ -86,45 +85,25 @@ export default function PageRenderer() {
 
           // No current match selected
           if (storedMatchID === null) {
-
-              console.log(
-                  "No current match ID found."
-              );
+              console.log("No current match ID found.");
 
               return;
           }
 
-          const matchID =
-              Number(storedMatchID);
+          const matchID = Number(storedMatchID);
 
-          const data =
-              await loadMatchDataByMatchID(
-                  matchID
-              );
+          const data = await loadMatchDataByMatchID(matchID);
 
-          console.log(
-              "Queried for:",
-              matchID
-          );
+          console.log("Queried for:", matchID);
 
-          console.log(
-              "Found:",
-              data
-          );
+          console.log("Found:", data);
 
           if (data) {
-
-              console.log(
-                  "Data found, loading into match state"
-              );
-
+              console.log("Data found, loading into match state");
               setMatch(data);
 
           } else {
-
-              console.log(
-                  `No match ${matchID} found in IndexedDB`
-              );
+              console.log( `No match ${matchID} found in IndexedDB`);
 
           }
 
