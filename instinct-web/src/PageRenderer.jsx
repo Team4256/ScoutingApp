@@ -51,6 +51,17 @@ export default function PageRenderer() {
         ]
     })
 
+    const [pitData, setPitData] = useState({
+        matchID: "",
+        team: "",
+        weight: "",
+        dy: "",
+        drivetrain: "",
+        bps: "",
+        climb: "",
+        notes: "",
+    })
+
     {/* Helper functions for pages */}
 
    function changePage(page) {
@@ -178,13 +189,19 @@ export default function PageRenderer() {
 
             {localStorage.getItem("scoutingMode") === "pit" &&
                 <PitSetupPage
+                    pitData={pitData}
+                    setPitData={setPitData}
                 />
             }
 
 
             <GlobalMenu
-              match={match}
-              setMatch={setMatch}
+                match={match}
+                setMatch={setMatch}
+                allianceData={allianceData}
+                setAllianceData={setAllianceData}
+                pitData={pitData}
+                setPitData={setPitData}
             />
         </>
     );

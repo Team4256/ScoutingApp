@@ -1,35 +1,72 @@
-import { useEffect, useState } from "react";
-import { loadAllMatchData, deleteMatch, loadUnexportedMatches, markMatchesAsExported} from "../Database/databaseHandler";
+import { useState } from "react";
+
+import {
+    loadAllMatchData,
+    deleteMatch,
+    loadUnexportedMatches,
+    loadAllAllianceData,
+    deleteAllianceData,
+    loadUnexportedAllianceData,
+    loadPitData,
+    loadAllPitData,
+    loadUnexportedPitData,
+    deletePitData
+} from "../Database/databaseHandler";
 
 import QRCodeDisplay from "./QRCodeDisplay.jsx";
 
-import { sendDataToServer } from "../Database/dataSender";
-
 import "./GlobalMenu.css";
+
 
 export default function GlobalMenu({
     match,
-    setMatch
+    setMatch,
+
+    allianceData,
+    setAllianceData,
+
+    pitData,
+    setPitData
 }) {
 
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [activeMenu, setActiveMenu] = useState("main");
+    const [menuOpen, setMenuOpen] =
+        useState(false);
 
-    const [savedMatches, setSavedMatches] = useState([]);
+    const [activeMenu, setActiveMenu] =
+        useState("main");
 
-    const [selectedMatch, setSelectedMatch] = useState(null);
+    const [savedMatches, setSavedMatches] =
+        useState([]);
 
-    const [unexportedCount, setUnexportedCount] = useState(0);
+    const [selectedMatch, setSelectedMatch] =
+        useState(null);
 
-    const [scoutName, setScoutName] = useState(localStorage.getItem("scoutName") || "");
+    const [unexportedCount, setUnexportedCount] =
+        useState(0);
 
-    const [defaultAlliance, setDefaultAlliance] = useState(localStorage.getItem("defaultAlliance") || "blue");
+    const [scoutName, setScoutName] =
+        useState(
+            localStorage.getItem("scoutName") || ""
+        );
 
-    const [fieldFlipped, setFieldFlipped] = useState(localStorage.getItem("fieldFlipped") === "true");
+    const [defaultAlliance, setDefaultAlliance] =
+        useState(
+            localStorage.getItem("defaultAlliance") || "blue"
+        );
 
-    const [showQRCode, setShowQRCode] = useState(false);
+    const [fieldFlipped, setFieldFlipped] =
+        useState(
+            localStorage.getItem("fieldFlipped") === "true"
+        );
 
-    const [scoutingMode, setScoutingMode] = useState(localStorage.getItem("scoutingMode") || "team");
+    const [showQRCode, setShowQRCode] =
+        useState(false);
+
+    const [scoutingMode, setScoutingMode] =
+        useState(
+            localStorage.getItem("scoutingMode") || "team"
+        );
+
 
     /*
     ========================================
@@ -38,22 +75,40 @@ export default function GlobalMenu({
     */
 
     const defaultMatch = {
+
         id: "",
+
         team: "",
+
         matchID: "",
+
         autoStartPosition: "",
-        alliance: localStorage.getItem("defaultAlliance") || "blue",
+
+        alliance:
+            localStorage.getItem("defaultAlliance") || "blue",
+
         autoPoints: 0,
+
         teleopPoints: 0,
+
         teleopPassPoints: 0,
+
         climb: "None",
+
         notes: "",
+
         trench: false,
+
         broke: "",
+
     };
 
 
-    /* Open & close menu */
+    /*
+    ========================================
+    Open / Close Menu
+    ========================================
+    */
 
     function openMenu() {
 
@@ -81,21 +136,114 @@ export default function GlobalMenu({
     ========================================
     Load Saved Matches
     ========================================
+    
+    Loads BOTH individual and alliance
+    scouting records.
+    ========================================
     */
-
     async function loadSavedMatches() {
 
         try {
 
-            const matches = await loadAllMatchData();
+            const individualMatches = await loadAllMatchData();
 
-            setSavedMatches(matches);
 
-            const unexported = matches.filter(
-                match => match.exported === false
+            const allianceMatches = await loadAllAllianceData();
+
+            const pitMatches = await loadAllPitData();
+
+
+            /*
+            Add a type to each record so we
+            know which database it came from.
+            */
+
+            const individualRecords =
+                individualMatches.map(match => ({
+                    ...match,
+                    scoutingType: "individual"
+
+                }));
+
+
+            const allianceRecords =
+                allianceMatches.map(alliance => ({
+                    ...alliance,
+                    scoutingType: "alliance"
+
+                }));
+
+            const pitRecords =
+                pitMatches.map(pit => ({
+                    ...pit,
+                    scoutingType: "pit"
+
+                }));
+
+
+            /*
+            Combine both types into one list.
+            */
+
+            const combined = [
+
+                ...individualRecords,
+
+                ...allianceRecords,
+
+                ...pitRecords
+
+            ];
+
+
+            /*
+            Sort newest records first.
+
+            This assumes databaseID exists
+            in both tables.
+            */
+
+            combined.sort(
+                (a, b) =>
+                    (b.databaseID || 0) -
+                    (a.databaseID || 0)
             );
 
-            setUnexportedCount(unexported.length);
+
+            setSavedMatches(combined);
+
+
+            /*
+            Count unexported records from
+            BOTH databases.
+            */
+
+            const individualUnexported =
+                individualMatches.filter(
+                    match =>
+                        match.exported === false
+                );
+
+
+            const allianceUnexported =
+                allianceMatches.filter(
+                    alliance =>
+                        alliance.exported === false
+                );
+
+            const pitUnexported =
+                pitMatches.filter(
+                    pit =>
+                        pit.exported === false
+                );
+
+
+            setUnexportedCount(
+                individualUnexported.length +
+                allianceUnexported.length +
+                pitUnexported.length
+            );
+
 
         } catch (error) {
 
@@ -111,7 +259,7 @@ export default function GlobalMenu({
 
     /*
     ========================================
-    Load A Saved Match
+    Select Saved Match
     ========================================
     */
 
@@ -122,31 +270,131 @@ export default function GlobalMenu({
     }
 
 
+    /*
+    ========================================
+    Load Selected Match
+    ========================================
+    */
+
     function loadSelectedMatch() {
 
         if (!selectedMatch) {
             return;
         }
 
-        setMatch({
-            matchID: selectedMatch.matchID,
-            team: selectedMatch.team,
-            alliance: selectedMatch.alliance,
-            autoStartPosition: selectedMatch.autoStartPosition,
-            autoPoints: selectedMatch.autoPoints,
-            teleopPoints: selectedMatch.teleopPoints,
-            teleopPassPoints: selectedMatch.teleopPassPoints,
-            climb: selectedMatch.climb,
-            notes: selectedMatch.notes,
-            trench: selectedMatch.trench,
-            broke: selectedMatch.broke
-        });
 
-        closeMenu();
+        /* Individual match */
+
+        if (
+            selectedMatch.scoutingType ===
+            "individual"
+        ) {
+
+            setMatch({
+
+                matchID:
+                    selectedMatch.matchID,
+
+                team:
+                    selectedMatch.team,
+
+                alliance:
+                    selectedMatch.alliance,
+
+                autoStartPosition:
+                    selectedMatch.autoStartPosition,
+
+                autoPoints:
+                    selectedMatch.autoPoints,
+
+                teleopPoints:
+                    selectedMatch.teleopPoints,
+
+                teleopPassPoints:
+                    selectedMatch.teleopPassPoints,
+
+                climb:
+                    selectedMatch.climb,
+
+                notes:
+                    selectedMatch.notes,
+
+                trench:
+                    selectedMatch.trench,
+
+                broke:
+                    selectedMatch.broke
+
+            });
+
+
+            /*
+            Switch back to Team Scouting
+            */
+
+            updateScoutingMode("team");
+
+        }
+
+
+        /* Alliance match */
+        else if (
+            selectedMatch.scoutingType ===
+            "alliance"
+        ) {
+
+            setAllianceData({
+
+                matchID:
+                    selectedMatch.matchID,
+
+                teams:
+                    selectedMatch.teams.map(team => ({
+
+                        team:
+                            team.team,
+
+                        notes:
+                            team.notes
+
+                    }))
+
+            });
+
+            updateScoutingMode("alliance");
+
+        }
+
+
+        /* Pit match */
+        else if (
+            selectedMatch.scoutingType ===
+            "pit"
+        ) {
+            setPitData({
+                team:
+                    selectedMatch.team,
+                weight:
+                    selectedMatch.weight,
+                dy:
+                    selectedMatch.dy,
+                drivetrain:
+                    selectedMatch.drivetrain,
+                bps:
+                    selectedMatch.bps,
+                climb:
+                    selectedMatch.climb,
+                notes:
+                    selectedMatch.notes
+            });
+
+            updateScoutingMode("pit");
 
     }
 
+     closeMenu();
 
+    }
     /*
     ========================================
     Delete Saved Match
@@ -159,20 +407,59 @@ export default function GlobalMenu({
             return;
         }
 
+
         try {
 
-            await deleteMatch(
-                selectedMatch.databaseID
-            );
+            /*
+            Delete individual match
+            */
+
+            if (
+                selectedMatch.scoutingType ===
+                "individual"
+            ) {
+
+                await deleteMatch(
+                    selectedMatch.databaseID
+                );
+
+            }
+
+
+            /*
+            Delete alliance match
+            */
+
+            else if (
+                selectedMatch.scoutingType ===
+                "alliance"
+            ) {
+
+                await deleteAllianceData(
+                    selectedMatch.databaseID
+                );
+
+            }
+
+            else if (
+                selectedMatch.scoutingType ===
+                "pit"
+            ) {
+                await deletePitData(
+                    selectedMatch.databaseID
+                );
+            }
+
 
             setSelectedMatch(null);
 
             await loadSavedMatches();
 
+
         } catch (error) {
 
             console.error(
-                "Error deleting match:",
+                "Error deleting saved data:",
                 error
             );
 
@@ -193,6 +480,7 @@ export default function GlobalMenu({
             ...defaultMatch
         });
 
+
         closeMenu();
 
     }
@@ -206,53 +494,92 @@ export default function GlobalMenu({
 
     async function openExportMenu() {
 
-        const unexported =
-            await loadUnexportedMatches();
+        try {
 
-        setUnexportedCount(
-            unexported.length
-        );
+            const individual = await loadUnexportedMatches();
+            const alliance = await loadUnexportedAllianceData();
+            const pit = await loadUnexportedPitData();
 
-        setActiveMenu("export");
+
+            setUnexportedCount(
+                individual.length +
+                alliance.length +
+                pit.length
+            );
+
+
+            setActiveMenu("export");
+
+        } catch (error) {
+
+            console.error(
+                "Error loading export count:",
+                error
+            );
+
+        }
 
     }
+
 
     /*
     ========================================
-    Settings Functions
+    Settings
     ========================================
     */
+
     function updateScoutName(value) {
+
         setScoutName(value);
-        localStorage.setItem("scoutName", value);
+
+        localStorage.setItem(
+            "scoutName",
+            value
+        );
+
     }
+
 
     function updateDefaultAlliance(alliance) {
+
         setDefaultAlliance(alliance);
-        localStorage.setItem("defaultAlliance", alliance);
+
+        localStorage.setItem(
+            "defaultAlliance",
+            alliance
+        );
+
     }
 
+
     function toggleFieldOrientation() {
-        const newValue = !fieldFlipped;
+
+        const newValue =
+            !fieldFlipped;
+
 
         setFieldFlipped(newValue);
+
 
         localStorage.setItem(
             "fieldFlipped",
             newValue
         );
+
     }
+
 
     function updateScoutingMode(mode) {
 
-    localStorage.setItem(
-        "scoutingMode",
-        mode
-    );
+        localStorage.setItem(
+            "scoutingMode",
+            mode
+        );
 
-    setScoutingMode(mode);
 
-}
+        setScoutingMode(mode);
+
+    }
 
 
     /*
@@ -262,6 +589,7 @@ export default function GlobalMenu({
     */
 
     return (
+
         <>
 
             {/* Bottom-left menu button */}
@@ -285,9 +613,9 @@ export default function GlobalMenu({
                 <div className="global-menu-window">
 
 
-                    {/* ==============================
+                    {/* ========================================
                         MAIN MENU
-                    ============================== */}
+                    ======================================== */}
 
                     {activeMenu === "main" && (
 
@@ -333,9 +661,11 @@ export default function GlobalMenu({
                                     }
                                 >
                                     Export Matches
+
                                     {unexportedCount > 0 &&
                                         ` (${unexportedCount})`
                                     }
+
                                 </button>
 
 
@@ -371,9 +701,9 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ==============================
+                    {/* ========================================
                         SAVED MATCHES
-                    ============================== */}
+                    ======================================== */}
 
                     {activeMenu === "savedMatches" && (
 
@@ -408,6 +738,7 @@ export default function GlobalMenu({
 
                             <div className="saved-matches-list">
 
+
                                 {savedMatches.length === 0 && (
 
                                     <p>
@@ -421,17 +752,20 @@ export default function GlobalMenu({
                                     savedMatch => (
 
                                         <button
+
                                             key={
-                                                savedMatch.databaseID
+                                                `${savedMatch.scoutingType}-${savedMatch.databaseID}`
                                             }
+
                                             className={
                                                 `saved-match ${
-                                                    selectedMatch?.databaseID ===
-                                                    savedMatch.databaseID
+                                                    selectedMatch ===
+                                                    savedMatch
                                                         ? "selected"
                                                         : ""
                                                 }`
                                             }
+
                                             onClick={() =>
                                                 selectSavedMatch(
                                                     savedMatch
@@ -439,22 +773,101 @@ export default function GlobalMenu({
                                             }
                                         >
 
-                                            <strong>
-                                                M
-                                                {savedMatch.matchID + " "}
-                                            </strong>
+
+                                            {/* Individual */}
+
+                                            {savedMatch.scoutingType ===
+                                                "individual" && (
+
+                                                <>
+
+                                                    <strong>
+                                                        M
+                                                        {
+                                                            savedMatch.matchID + " "
+                                                        }
+                                                    </strong>
+
+                                                    <span>
+                                                        Team{" "}
+                                                        {
+                                                            savedMatch.team + " "
+                                                        }
+                                                    </span>
+
+                                                </>
+
+                                            )}
+
+
+                                            {/* Alliance */}
+
+                                            {savedMatch.scoutingType ===
+                                                "alliance" && (
+
+                                                <>
+
+                                                    <strong>
+                                                        M
+                                                        {
+                                                            savedMatch.matchID + " "
+                                                        }
+                                                    </strong>
+
+                                                    <span>
+                                                        Alliance {" "}
+                                                    </span>
+
+                                                    <span>
+                                                        {
+                                                            savedMatch.teams
+                                                                ?.map(
+                                                                    team =>
+                                                                        team.team
+                                                                )
+                                                                .join(
+                                                                    ", "
+                                                                )
+                                                        }
+                                                    </span>
+
+                                                </>
+
+                                            )}
+
+                                            {/* Pit */}
+
+                                            {savedMatch.scoutingType ===
+                                                "pit" && (
+
+                                                <>
+
+                                                    <strong>
+                                                        Pit Scouting {" "}
+                                                    </strong>
+
+                                                    <span>
+                                                        Team{" "}
+                                                        {
+                                                            savedMatch.team + " "
+                                                        }
+                                                    </span>
+
+                                                </>
+
+                                            )}
+
 
                                             <span>
-                                                Team{" "}
-                                                {savedMatch.team + " "}
-                                            </span>
 
-                                            <span>
-                                                {savedMatch.exported
-                                                    ? "Exported"
-                                                    : "Not Exported"
+                                                {
+                                                    savedMatch.exported
+                                                        ? " Exported"
+                                                        : " Not Exported"
                                                 }
+
                                             </span>
+
 
                                         </button>
 
@@ -463,6 +876,8 @@ export default function GlobalMenu({
 
                             </div>
 
+
+                            {/* Selected record actions */}
 
                             {selectedMatch && (
 
@@ -495,9 +910,9 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ==============================
+                    {/* ========================================
                         EXPORT MENU
-                    ============================== */}
+                    ======================================== */}
 
                     {activeMenu === "export" && (
 
@@ -532,21 +947,23 @@ export default function GlobalMenu({
 
                             <div className="global-menu-buttons">
 
-
                                 <p className="export-count">
 
                                     {unexportedCount}{" "}
-                                    match(es) waiting
+                                    matches waiting
                                     to be exported.
 
                                 </p>
 
+
                                 <button
-                                    onClick={() => setShowQRCode(true)}
+                                    onClick={() =>
+                                        setShowQRCode(true)
+                                    }
                                 >
                                     Generate QR Code
                                 </button>
-                
+
                             </div>
 
                         </>
@@ -554,9 +971,9 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ==============================
+                    {/* ========================================
                         SETTINGS
-                    ============================== */}
+                    ======================================== */}
 
                     {activeMenu === "settings" && (
 
@@ -591,10 +1008,11 @@ export default function GlobalMenu({
 
                             <div className="menu-content">
 
+
                                 {/* Scout Name */}
 
                                 <label className="settings-label">
-                                    Scout Name: {""}
+                                    Scout Name:
                                 </label>
 
                                 <input
@@ -603,7 +1021,9 @@ export default function GlobalMenu({
                                     placeholder="Enter your name"
                                     value={scoutName}
                                     onChange={(e) =>
-                                        updateScoutName(e.target.value)
+                                        updateScoutName(
+                                            e.target.value
+                                        )
                                     }
                                 />
 
@@ -611,32 +1031,40 @@ export default function GlobalMenu({
                                 {/* Default Alliance */}
 
                                 <label className="settings-label">
-                                  {" "}  Default Alliance
+                                    Default Alliance
                                 </label>
+
 
                                 <div className="alliance-toggle">
 
                                     <button
                                         className={
-                                            defaultAlliance === "red"
+                                            defaultAlliance ===
+                                            "red"
                                                 ? "alliance-option selected-red"
                                                 : "alliance-option"
                                         }
                                         onClick={() =>
-                                            updateDefaultAlliance("red")
+                                            updateDefaultAlliance(
+                                                "red"
+                                            )
                                         }
                                     >
                                         🔴 Red
                                     </button>
 
+
                                     <button
                                         className={
-                                            defaultAlliance === "blue"
+                                            defaultAlliance ===
+                                            "blue"
                                                 ? "alliance-option selected-blue"
                                                 : "alliance-option"
                                         }
                                         onClick={() =>
-                                            updateDefaultAlliance("blue")
+                                            updateDefaultAlliance(
+                                                "blue"
+                                            )
                                         }
                                     >
                                         🔵 Blue
@@ -651,24 +1079,38 @@ export default function GlobalMenu({
                                     Field Orientation
                                 </label>
 
+
                                 <button
                                     className="orientation-button"
-                                    onClick={toggleFieldOrientation}
+                                    onClick={
+                                        toggleFieldOrientation
+                                    }
                                 >
-                                    {fieldFlipped ? "Flipped Field" : "Normal Field" }
+                                    {
+                                        fieldFlipped
+                                            ? "Flipped Field"
+                                            : "Normal Field"
+                                    }
                                 </button>
 
+
+                                {/* Scouting Mode */}
+
                                 <label className="settings-label">
-                                    Scouting Mode: {" "}
+                                    Scouting Mode:
                                 </label>
+
 
                                 <select
                                     className="settings-input"
                                     value={scoutingMode}
                                     onChange={(e) =>
-                                        updateScoutingMode(e.target.value)
+                                        updateScoutingMode(
+                                            e.target.value
+                                        )
                                     }
                                 >
+
                                     <option value="team">
                                         Team Scouting
                                     </option>
@@ -680,6 +1122,7 @@ export default function GlobalMenu({
                                     <option value="pit">
                                         Pit Scouting
                                     </option>
+
                                 </select>
 
                             </div>
@@ -689,9 +1132,9 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ==============================
+                    {/* ========================================
                         RESET
-                    ============================== */}
+                    ======================================== */}
 
                     {activeMenu === "reset" && (
 
@@ -751,12 +1194,17 @@ export default function GlobalMenu({
 
                     )}
 
+
+                    {/* QR Code */}
+
                     {showQRCode && (
+
                         <QRCodeDisplay
                             onClose={() =>
                                 setShowQRCode(false)
                             }
                         />
+
                     )}
 
                 </div>
@@ -764,6 +1212,7 @@ export default function GlobalMenu({
             )}
 
         </>
+
     );
 
 }

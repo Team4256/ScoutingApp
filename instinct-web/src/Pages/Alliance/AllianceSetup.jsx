@@ -8,116 +8,42 @@ export default function AllianceSetup({
 
 
     console.log("Alliance data:", allianceData);
-console.log("Set alliance data:", setAllianceData);
-    /*
-    ========================================
-    Update Match Number
-    ========================================
-    */
+    console.log("Set alliance data:", setAllianceData);
 
     function updateMatchID(value) {
-
-        setAllianceData({
-            ...allianceData,
-            matchID: value
-        });
+        setAllianceData({...allianceData, matchID: value});
 
     }
-
-
-    /*
-    ========================================
-    Update Team Number
-    ========================================
-    */
 
     function updateTeam(index, value) {
+        const updatedTeams = [...allianceData.teams];
 
-        const updatedTeams =
-            [...allianceData.teams];
+        updatedTeams[index] = {...updatedTeams[index], team: value};
 
-        updatedTeams[index] = {
-
-            ...updatedTeams[index],
-
-            team: value
-
-        };
-
-
-        setAllianceData({
-
-            ...allianceData,
-
-            teams: updatedTeams
-
-        });
+        setAllianceData({...allianceData, teams: updatedTeams});
 
     }
-
-
-    /*
-    ========================================
-    Update Team Notes
-    ========================================
-    */
 
     function updateNotes(index, value) {
+        const updatedTeams = [...allianceData.teams];
 
-        const updatedTeams =
-            [...allianceData.teams];
+        updatedTeams[index] = { ...updatedTeams[index], notes: value};
 
-        updatedTeams[index] = {
-
-            ...updatedTeams[index],
-
-            notes: value
-
-        };
-
-
-        setAllianceData({
-
-            ...allianceData,
-
-            teams: updatedTeams
-
-        });
+        setAllianceData({...allianceData, teams: updatedTeams});
 
     }
-
-
-    /*
-    ========================================
-    Save Alliance
-    ========================================
-    */
 
     async function saveAlliance() {
 
         if (!allianceData.matchID) {
-
-            alert(
-                "Please enter a match number."
-            );
-
             return;
 
         }
 
-
-        const missingTeam =
-            allianceData.teams.some(
-                team => !team.team
-            );
+        const missingTeam = allianceData.teams.some(team => !team.team);
 
 
         if (missingTeam) {
-
-            alert(
-                "Please enter all three team numbers."
-            );
-
             return;
 
         }
@@ -125,77 +51,34 @@ console.log("Set alliance data:", setAllianceData);
 
         try {
 
-            /*
-            ========================================
-            Create object to save
-            ========================================
-            */
-
             const dataToSave = {
 
-                matchID:
-                    Number(
-                        allianceData.matchID
-                    ),
+                matchID: Number(allianceData.matchID),
 
-                teams:
-                    allianceData.teams.map(
-                        team => ({
-
-                            team:
-                                Number(team.team),
-
-                            notes:
-                                team.notes
+                teams: allianceData.teams.map(team => ({
+                            team: Number(team.team),
+                            notes: team.notes
 
                         })
                     )
 
             };
 
-
-            /*
-            ========================================
-            Save to IndexedDB
-            ========================================
-            */
-
-            await saveAllianceData(
-                dataToSave
-            );
+            await saveAllianceData(dataToSave);
 
 
-            alert(
-                `Alliance scouting for Match ${allianceData.matchID} saved!`
-            );
-
-
-            /*
-            ========================================
-            Clear page
-            ========================================
-            */
-
+            // clear the alliance data after saving
             setAllianceData({
 
                 matchID: "",
 
                 teams: [
 
-                    {
-                        team: "",
-                        notes: ""
-                    },
+                    {team: "", notes: ""},
 
-                    {
-                        team: "",
-                        notes: ""
-                    },
+                    {team: "", notes: ""},
 
-                    {
-                        team: "",
-                        notes: ""
-                    }
+                    {team: "", notes: ""}
 
                 ]
 
@@ -203,16 +86,9 @@ console.log("Set alliance data:", setAllianceData);
 
 
         } catch (error) {
+            console.error("Error saving alliance scouting:", error);
 
-            console.error(
-                "Error saving alliance scouting:",
-                error
-            );
-
-
-            alert(
-                "Failed to save alliance scouting."
-            );
+            alert("Failed to save alliance scouting.");
 
         }
 
@@ -223,10 +99,7 @@ console.log("Set alliance data:", setAllianceData);
 
         <div className="alliance-page">
 
-
-            {/* ==============================
-                Match Number
-            ============================== */}
+            {/* Match number*/}
 
             <div className="alliance-section">
 
@@ -254,9 +127,7 @@ console.log("Set alliance data:", setAllianceData);
             </div>
 
 
-            {/* ==============================
-                Teams
-            ============================== */}
+            {/* Teams */}
 
             {allianceData.teams.map(
                 (team, index) => (
@@ -311,9 +182,7 @@ console.log("Set alliance data:", setAllianceData);
             )}
 
 
-            {/* ==============================
-                Save
-            ============================== */}
+            {/* Save */}
 
             <div className="alliance-buttons">
 

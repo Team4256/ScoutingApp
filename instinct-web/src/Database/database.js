@@ -4,5 +4,6 @@ export const db = new Dexie("Database");
 
 db.version(6).stores({
     matchData: "++databaseID, exported, matchID",
-    allianceData: "++databaseID, matchID, exported"
+    allianceData: "++databaseID, matchID, exported",
+    pitData: "++databaseID, matchID, exported"
 });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-import { loadUnexportedMatches, loadUnexportedAllianceData } from "../Database/databaseHandler";
+import { loadUnexportedMatches, loadUnexportedAllianceData, loadUnexportedPitData } from "../Database/databaseHandler";
 import "./QRCodeDisplay.css";
 
 export default function QRCodeDisplay({ onClose }) {
@@ -13,12 +13,9 @@ export default function QRCodeDisplay({ onClose }) {
 
             try {
 
-                const individualMatches =
-                    await loadUnexportedMatches();
-
-
-                const allianceMatches =
-                    await loadUnexportedAllianceData();
+                const individualMatches = await loadUnexportedMatches();
+                const allianceMatches = await loadUnexportedAllianceData();
+                const pitMatches = await loadUnexportedPitData();
 
 
                 /*
@@ -50,12 +47,25 @@ export default function QRCodeDisplay({ onClose }) {
                         })
                     );
 
+                const pit =
+                    pitMatches.map(
+                        pit => ({
+
+                            type: "pit",
+
+                            data: pit
+
+                        })
+                    );
+
 
                 const combined = [
 
                     ...individual,
 
-                    ...alliance
+                    ...alliance,
+
+                    ...pit
 
                 ];
 

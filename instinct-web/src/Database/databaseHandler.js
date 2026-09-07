@@ -17,22 +17,58 @@ export async function saveAllianceData(
 ) {
 
     return await db.allianceData.add({
-
         ...alliance,
-
         exported: false
 
     });
 
 }
 
+export async function savePitData(pitData) {
+
+    return await db.pitData.add({
+        ...pitData,
+        exported: false
+    });
+
+}
+
+export async function loadPitData() {
+    return await db.pitData.toArray();
+
+}
+
+export async function loadUnexportedPitData() {
+    const pitData = await db.pitData.toArray();
+
+    return pitData.filter(pit => pit.exported === false);
+}
+
+export async function markPitDataAsExported(databaseIDs) {
+    await db.transaction(
+        "rw",
+        db.pitData,
+        async () => {
+            for (const databaseID of databaseIDs) {
+                await db.pitData.update(databaseID, {exported: true});
+            }
+        }
+    );
+}
+
+export async function deletePitData(databaseID) {
+    await db.pitData.delete(databaseID);
+}
+
+export async function loadAllPitData() {
+    return await db.pitData.toArray();
+}
 
 export async function loadAllAllianceData() {
 
     return await db
         .allianceData
         .toArray();
-
 }
 
 
@@ -158,6 +194,12 @@ export async function markMatchesAsExported(databaseIDs) {
 export async function deleteMatch(databaseID) {
 
     await db.matchData.delete(databaseID);
+
+}
+
+export async function deleteAllianceData(databaseID) {
+
+    await db.allianceData.delete(databaseID);
 
 }
 
