@@ -1009,7 +1009,7 @@ export default function GlobalMenu({
                                 {/* Scout Name */}
 
                                 <label className="settings-label">
-                                    Scout Name:
+                                    Scout Name: {" "}
                                 </label>
 
                                 <input
@@ -1094,7 +1094,7 @@ export default function GlobalMenu({
                                 {/* Scouting Mode */}
 
                                 <label className="settings-label">
-                                    Scouting Mode:
+                                    Scouting Mode: {" "}
                                 </label>
 
 

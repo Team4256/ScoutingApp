@@ -21,7 +21,6 @@ export default function AllianceSetup({
 
     function updateTeam(index, value) {
         const updatedTeams = [...allianceData.teams];
-        const updatedTeams = [...allianceData.teams];
 
         updatedTeams[index] = {...updatedTeams[index], team: value};
 
