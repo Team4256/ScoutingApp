@@ -18,41 +18,28 @@ export default function QRCodeDisplay({ onClose }) {
                 const pitMatches = await loadUnexportedPitData();
 
 
-                /*
-                ========================================
-                Maximum of 10 total records
-                ========================================
-                */
+                /* Maximum of 10 total records so qr code fits */
 
-                const individual =
-                    individualMatches.map(
+                const individual = individualMatches.map(
                         match => ({
-
                             type: "individual",
-
                             data: match
 
                         })
                     );
 
 
-                const alliance =
-                    allianceMatches.map(
+                const alliance = allianceMatches.map(
                         alliance => ({
-
                             type: "alliance",
-
                             data: alliance
 
                         })
                     );
 
-                const pit =
-                    pitMatches.map(
+                const pit = pitMatches.map(
                         pit => ({
-
                             type: "pit",
-
                             data: pit
 
                         })
@@ -60,85 +47,50 @@ export default function QRCodeDisplay({ onClose }) {
 
 
                 const combined = [
-
                     ...individual,
-
                     ...alliance,
-
                     ...pit
 
                 ];
 
 
-                const dataToSend =
-                    combined.slice(0, 10);
+                const dataToSend = combined.slice(0, 10);
 
 
-                if (
-                    dataToSend.length === 0
-                ) {
-
-                    alert(
-                        "There are no unexported matches."
-                    );
-
+                if (dataToSend.length === 0) {
+                    alert( "There are no unexported matches." );
                     onClose();
-
                     return;
 
                 }
 
 
-                /*
-                ========================================
-                QR payload
-                ========================================
-                */
+                /* QR payload */
 
                 const qrPayload = {
-
-                    type:
-                        "scouting-data",
-
-                    version:
-                        1,
-
-                    records:
-                        dataToSend
+                    type: "scouting-data",
+                    version: 1,
+                    records: dataToSend
 
                 };
 
 
-                setQrData(
-                    JSON.stringify(
-                        qrPayload
-                    )
-                );
+                setQrData(JSON.stringify(qrPayload));
 
 
             } catch (error) {
 
-                console.error(
-                    "Error loading data for QR code:",
-                    error
-                );
-
-
-                alert(
-                    "Failed to create QR code."
-                );
-
+                console.error("Error loading data for QR code:", error);
+                alert("Failed to create QR code");
 
                 onClose();
 
             } finally {
-
                 setLoading(false);
 
             }
 
         }
-
 
         loadData();
 
@@ -186,7 +138,7 @@ export default function QRCodeDisplay({ onClose }) {
 
                         <p className="qr-instructions">
                             Scan this code with the
-                            dashboard computer.
+                            dashboard computer
                         </p>
 
                     </>

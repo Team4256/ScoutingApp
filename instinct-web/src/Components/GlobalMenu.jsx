@@ -29,131 +29,71 @@ export default function GlobalMenu({
     setPitData
 }) {
 
-    const [menuOpen, setMenuOpen] =
-        useState(false);
-
-    const [activeMenu, setActiveMenu] =
-        useState("main");
-
-    const [savedMatches, setSavedMatches] =
-        useState([]);
-
-    const [selectedMatch, setSelectedMatch] =
-        useState(null);
-
-    const [unexportedCount, setUnexportedCount] =
-        useState(0);
-
-    const [scoutName, setScoutName] =
-        useState(
-            localStorage.getItem("scoutName") || ""
-        );
-
-    const [defaultAlliance, setDefaultAlliance] =
-        useState(
-            localStorage.getItem("defaultAlliance") || "blue"
-        );
-
-    const [fieldFlipped, setFieldFlipped] =
-        useState(
-            localStorage.getItem("fieldFlipped") === "true"
-        );
-
-    const [showQRCode, setShowQRCode] =
-        useState(false);
-
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [activeMenu, setActiveMenu] = useState("main");
+    const [savedMatches, setSavedMatches] = useState([]);
+    const [selectedMatch, setSelectedMatch] = useState(null);
+    const [unexportedCount, setUnexportedCount] = useState(0);
+    const [scoutName, setScoutName] = useState(localStorage.getItem("scoutName") || "");
+    const [defaultAlliance, setDefaultAlliance] = useState(localStorage.getItem("defaultAlliance") || "blue");
+    const [fieldFlipped, setFieldFlipped] = useState(localStorage.getItem("fieldFlipped") === "true");
+    const [showQRCode, setShowQRCode] = useState(false);
     const [scoutingMode, setScoutingMode] = useState(localStorage.getItem("scoutingMode") || "team");
     localStorage.setItem("scoutingMode", scoutingMode);
 
-    /*
-    ========================================
-    Current Match Defaults
-    ========================================
-    */
+    /* Current match defaults */
 
     const defaultMatch = {
-
         id: "",
-
         team: "",
-
         matchID: "",
-
         autoStartPosition: "",
 
-        alliance:
-            localStorage.getItem("defaultAlliance") || "blue",
+        alliance: localStorage.getItem("defaultAlliance") || "blue",
 
         autoPoints: 0,
-
         teleopPoints: 0,
-
         teleopPassPoints: 0,
 
         climb: "None",
-
         notes: "",
-
         trench: false,
-
         broke: "",
 
     };
 
 
-    /*
-    ========================================
-    Open / Close Menu
-    ========================================
-    */
+    /* Open & Close menu */
 
     function openMenu() {
-
         setMenuOpen(true);
-
         setActiveMenu("main");
-
         loadSavedMatches();
 
     }
 
 
     function closeMenu() {
-
         setMenuOpen(false);
-
         setActiveMenu("main");
-
         setSelectedMatch(null);
 
     }
 
 
-    /*
-    ========================================
-    Load Saved Matches
-    ========================================
-    
-    Loads BOTH individual and alliance
-    scouting records.
-    ========================================
-    */
+    /* Load saved matches
+    Loads  individual an d alliance data */
+
     async function loadSavedMatches() {
 
         try {
 
             const individualMatches = await loadAllMatchData();
-
-
             const allianceMatches = await loadAllAllianceData();
-
             const pitMatches = await loadAllPitData();
 
 
-            /*
-            Add a type to each record so we
-            know which database it came from.
-            */
+            /*  Add a type to each record so original database is known */
 
             const individualRecords =
                 individualMatches.map(match => ({
@@ -178,42 +118,24 @@ export default function GlobalMenu({
                 }));
 
 
-            /*
-            Combine both types into one list.
-            */
+            /* Combine both types into one list */
 
             const combined = [
-
                 ...individualRecords,
-
                 ...allianceRecords,
-
                 ...pitRecords
 
             ];
 
 
-            /*
-            Sort newest records first.
+            /* Sort newest records first */
 
-            This assumes databaseID exists
-            in both tables.
-            */
-
-            combined.sort(
-                (a, b) =>
-                    (b.databaseID || 0) -
-                    (a.databaseID || 0)
-            );
-
+            combined.sort((a, b) => (b.databaseID || 0) - (a.databaseID || 0));
 
             setSavedMatches(combined);
 
 
-            /*
-            Count unexported records from
-            BOTH databases.
-            */
+            /* Count unexported records from both databases */
 
             const individualUnexported =
                 individualMatches.filter(
@@ -244,34 +166,22 @@ export default function GlobalMenu({
 
         } catch (error) {
 
-            console.error(
-                "Error loading saved matches:",
-                error
-            );
+            console.error("Error loading saved matches:", error);
 
         }
 
     }
 
 
-    /*
-    ========================================
-    Select Saved Match
-    ========================================
-    */
+    /* Select saved match */
 
     function selectSavedMatch(savedMatch) {
-
         setSelectedMatch(savedMatch);
 
     }
 
 
-    /*
-    ========================================
-    Load Selected Match
-    ========================================
-    */
+    /* Load selected match */
 
     function loadSelectedMatch() {
 
@@ -282,53 +192,28 @@ export default function GlobalMenu({
 
         /* Individual match */
 
-        if (
-            selectedMatch.scoutingType ===
-            "individual"
-        ) {
-
+        if (selectedMatch.scoutingType === "individual") {
             setMatch({
 
-                matchID:
-                    selectedMatch.matchID,
+                matchID: selectedMatch.matchID,
+                team: selectedMatch.team,
+                alliance: selectedMatch.alliance,
 
-                team:
-                    selectedMatch.team,
+                autoStartPosition: selectedMatch.autoStartPosition,
+                autoPoints: selectedMatch.autoPoints,
 
-                alliance:
-                    selectedMatch.alliance,
+                teleopPoints: selectedMatch.teleopPoints,
+                teleopPassPoints: selectedMatch.teleopPassPoints,
 
-                autoStartPosition:
-                    selectedMatch.autoStartPosition,
-
-                autoPoints:
-                    selectedMatch.autoPoints,
-
-                teleopPoints:
-                    selectedMatch.teleopPoints,
-
-                teleopPassPoints:
-                    selectedMatch.teleopPassPoints,
-
-                climb:
-                    selectedMatch.climb,
-
-                notes:
-                    selectedMatch.notes,
-
-                trench:
-                    selectedMatch.trench,
-
-                broke:
-                    selectedMatch.broke
+                climb: selectedMatch.climb,
+                notes: selectedMatch.notes,
+                trench: selectedMatch.trench,
+                broke: selectedMatch.broke
 
             });
 
 
-            /*
-            Switch back to Team Scouting
-            */
-
+            /* Switch back to Team Scouting */
             updateScoutingMode("team");
 
         }
@@ -341,18 +226,10 @@ export default function GlobalMenu({
         ) {
 
             setAllianceData({
-
-                matchID:
-                    selectedMatch.matchID,
-
-                teams:
-                    selectedMatch.teams.map(team => ({
-
-                        team:
-                            team.team,
-
-                        notes:
-                            team.notes
+                matchID: selectedMatch.matchID,
+                teams: selectedMatch.teams.map(team => ({
+                        team: team.team,
+                        notes: team.notes
 
                     }))
 
@@ -364,25 +241,15 @@ export default function GlobalMenu({
 
 
         /* Pit match */
-        else if (
-            selectedMatch.scoutingType ===
-            "pit"
-        ) {
+        else if (selectedMatch.scoutingType === "pit") {
             setPitData({
-                team:
-                    selectedMatch.team,
-                weight:
-                    selectedMatch.weight,
-                dy:
-                    selectedMatch.dy,
-                drivetrain:
-                    selectedMatch.drivetrain,
-                bps:
-                    selectedMatch.bps,
-                climb:
-                    selectedMatch.climb,
-                notes:
-                    selectedMatch.notes
+                team: selectedMatch.team,
+                weight: selectedMatch.weight,
+                dy: selectedMatch.dy,
+                drivetrain: selectedMatch.drivetrain,
+                bps: selectedMatch.bps,
+                climb: selectedMatch.climb,
+                notes: selectedMatch.notes
             });
 
             updateScoutingMode("pit");
@@ -392,11 +259,7 @@ export default function GlobalMenu({
      closeMenu();
 
     }
-    /*
-    ========================================
-    Delete Saved Match
-    ========================================
-    */
+    /* Delete saved match */
 
     async function handleDeleteMatch() {
 
@@ -404,78 +267,46 @@ export default function GlobalMenu({
             return;
         }
 
-
         try {
 
-            /*
-            Delete individual match
-            */
+            /* Delete individual match */
 
-            if (
-                selectedMatch.scoutingType ===
-                "individual"
-            ) {
+            if (selectedMatch.scoutingType === "individual") {
 
-                await deleteMatch(
-                    selectedMatch.databaseID
-                );
+                await deleteMatch(selectedMatch.databaseID);
 
             }
 
+            /* Delete alliance match */
 
-            /*
-            Delete alliance match
-            */
-
-            else if (
-                selectedMatch.scoutingType ===
-                "alliance"
-            ) {
-
-                await deleteAllianceData(
-                    selectedMatch.databaseID
-                );
+            else if (selectedMatch.scoutingType === "alliance") {
+                await deleteAllianceData(selectedMatch.databaseID);
 
             }
 
-            else if (
-                selectedMatch.scoutingType ===
-                "pit"
-            ) {
-                await deletePitData(
-                    selectedMatch.databaseID
-                );
-            }
+            else if (selectedMatch.scoutingType === "pit") {
+                await deletePitData(selectedMatch.databaseID);
 
+            }
 
             setSelectedMatch(null);
-
             await loadSavedMatches();
 
 
         } catch (error) {
 
-            console.error(
-                "Error deleting saved data:",
-                error
-            );
+            console.error("Error deleting saved data:", error);
 
         }
 
     }
 
 
-    /*
-    ========================================
-    Reset Current Match
-    ========================================
-    */
+    /* Reset current match*/
 
     function resetCurrentMatch() {
 
-        setMatch({
-            ...defaultMatch
-        });
+        setMatch({ ...defaultMatch});
 
 
         closeMenu();
@@ -483,11 +314,7 @@ export default function GlobalMenu({
     }
 
 
-    /*
-    ========================================
-    Export Menu
-    ========================================
-    */
+    /* Export menu */
 
     async function openExportMenu() {
 
@@ -519,11 +346,7 @@ export default function GlobalMenu({
     }
 
 
-    /*
-    ========================================
-    Settings
-    ========================================
-    */
+    /* Settings */
 
     function updateScoutName(value) {
 
@@ -579,11 +402,7 @@ export default function GlobalMenu({
     }
 
 
-    /*
-    ========================================
-    Render
-    ========================================
-    */
+    /* Render  */
 
     return (
 
@@ -610,9 +429,7 @@ export default function GlobalMenu({
                 <div className="global-menu-window">
 
 
-                    {/* ========================================
-                        MAIN MENU
-                    ======================================== */}
+                    {/* Main menu */}
 
                     {activeMenu === "main" && (
 
@@ -698,9 +515,7 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ========================================
-                        SAVED MATCHES
-                    ======================================== */}
+                    {/* Saved matches */}
 
                     {activeMenu === "savedMatches" && (
 
@@ -739,7 +554,7 @@ export default function GlobalMenu({
                                 {savedMatches.length === 0 && (
 
                                     <p>
-                                        No saved matches.
+                                        No saved matches
                                     </p>
 
                                 )}
@@ -874,7 +689,7 @@ export default function GlobalMenu({
                             </div>
 
 
-                            {/* Selected record actions */}
+                            {/* Selected match actions */}
 
                             {selectedMatch && (
 
@@ -907,9 +722,7 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ========================================
-                        EXPORT MENU
-                    ======================================== */}
+                    {/* Export menu */}
 
                     {activeMenu === "export" && (
 
@@ -968,9 +781,7 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ========================================
-                        SETTINGS
-                    ======================================== */}
+                    {/* Settings */}
 
                     {activeMenu === "settings" && (
 
@@ -1129,9 +940,7 @@ export default function GlobalMenu({
                     )}
 
 
-                    {/* ========================================
-                        RESET
-                    ======================================== */}
+                    {/* Reset */}
 
                     {activeMenu === "reset" && (
 

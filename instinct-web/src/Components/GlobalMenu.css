@@ -1,6 +1,4 @@
-/* =========================
-   Floating Menu Button
-========================= */
+/* Floating menu button */
 
 .global-menu-button {
     position: fixed;
@@ -35,9 +33,7 @@
 }
 
 
-/* =========================
-   Popup Window
-========================= */
+/* Popup window */
 
 .global-menu-window {
     position: fixed;
@@ -62,9 +58,7 @@
 }
 
 
-/* =========================
-   Header
-========================= */
+/* Header */
 
 .global-menu-header {
     display: flex;
@@ -91,9 +85,7 @@
 }
 
 
-/* =========================
-   Close Button
-========================= */
+/* Close button */
 
 .close-button {
     width: 40px;
@@ -117,9 +109,7 @@
 }
 
 
-/* =========================
-   Back Button
-========================= */
+/* Back button */
 
 .back-button {
     width: 40px;
@@ -143,9 +133,7 @@
 }
 
 
-/* =========================
-   Main Menu Buttons
-========================= */
+/* Main menu buttons */
 
 .global-menu-buttons {
     display: flex;
@@ -183,9 +171,7 @@
 }
 
 
-/* =========================
-   Popup Content
-========================= */
+/* Popup content */
 
 .menu-content {
     padding: 20px;
@@ -250,9 +236,7 @@
     background: #d14343;
 }
 
-/* =========================
-   Buttons Inside Content
-========================= */
+/* Buttons inside content  */
 
 .menu-content button {
     width: 100%;
@@ -279,9 +263,7 @@
 }
 
 
-/* =========================
-   Reset Buttons
-========================= */
+/* Reset buttons */
 
 .reset-buttons {
     display: flex;
@@ -314,9 +296,7 @@
 }
 
 
-/* =========================
-   Danger Button
-========================= */
+/* Danger button */
 
 .reset-buttons .danger-button {
     background: #d14343;
@@ -327,9 +307,7 @@
 }
 
 
-/* =========================
-   Mobile Layout
-========================= */
+/* Mobile layout  */
 
 @media (max-width: 600px) {
 

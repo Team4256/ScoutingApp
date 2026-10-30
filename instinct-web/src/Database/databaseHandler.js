@@ -17,6 +17,8 @@ export async function saveAllianceData(alliance) {
 
 }
 
+//Pit functions
+
 export async function savePitData(pitData) {
 
     return await db.pitData.add({
@@ -118,6 +120,8 @@ export async function markAllianceAsExported(databaseIDs) {
 //     }
 // }
 
+// Loading functions
+
 export async function loadMatchData(databaseID) {
     return await db.matchData.get(databaseID);
     
@@ -139,10 +143,14 @@ export async function loadUnexportedMatches() {
     return matches.filter(match => match.exported === false);
 }
 
+// Marking
+
 export async function markMatchesAsExported(databaseIDs) {
     await db.matchData.where("databaseID").anyOf(databaseIDs).modify({exported: true});
 
 }
+
+// Deleting
 
 export async function deleteMatch(databaseID) {
     await db.matchData.delete(databaseID);

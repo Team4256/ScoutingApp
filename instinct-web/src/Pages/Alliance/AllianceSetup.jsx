@@ -29,11 +29,7 @@ export default function AllianceSetup({
     }
 
 
-    /*
-    ========================================
-    Update Team Notes
-    ========================================
-    */
+    /* Update team notes */
 
     function updateNotes(index, value) {
         const updatedTeams = [...allianceData.teams];
