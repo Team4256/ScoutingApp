@@ -905,7 +905,7 @@ export default function GlobalMenu({
                                 {/* Scouting Mode */}
 
                                 <label className="settings-label">
-                                    Scouting Mode: {" "}
+                                    Scouting Mode (reload to change): {" "}
                                 </label>
 
 

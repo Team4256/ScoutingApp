@@ -66,8 +66,8 @@ export default function SetupPage({ match, setMatch, changePage }) {
                     onClick={toggleAlliance}
                 >
                     {match.alliance === "red"
-                        ? "🔴 Red Alliance"
-                        : "🔵 Blue Alliance"}
+                        ? "Red Alliance"
+                        : "Blue Alliance"}
                 </button>
 
             </main>

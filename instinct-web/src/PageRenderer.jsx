@@ -62,6 +62,8 @@ export default function PageRenderer() {
         notes: "",
     })
 
+    const [scoutingMode, setScoutingMode] = useState(() => localStorage.getItem("scoutingMode") || "");
+
     {/* Helper functions for pages */}
 
    function changePage(page) {
@@ -69,6 +71,12 @@ export default function PageRenderer() {
     console.log("Changed page!")
 
   }
+
+  function changeScoutingMode(mode) {
+    localStorage.setItem("scoutingMode", mode);
+    setScoutingMode(mode);
+
+}
 
   {/* Loads data when page first loads */}
    useEffect(() => {
@@ -115,7 +123,7 @@ export default function PageRenderer() {
 
   return (
         <>
-            {currentPage === "setup" && localStorage.getItem("scoutingMode") === "team" &&
+            {currentPage === "setup" && scoutingMode === "team" &&
                 <SetupPage 
                 changePage={changePage}
                 match={match}
@@ -124,7 +132,7 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "autoSetup" && localStorage.getItem("scoutingMode") === "team" &&
+            {currentPage === "autoSetup" && scoutingMode === "team" &&
                 <AutoSetupPage 
                 changePage={changePage} 
                 match={match}
@@ -133,7 +141,7 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "auto" && localStorage.getItem("scoutingMode") === "team" &&
+            {currentPage === "auto" && scoutingMode === "team" &&
                 <AutoPage 
                 changePage={changePage} 
                 match={match}
@@ -142,7 +150,7 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "teleop" && localStorage.getItem("scoutingMode") === "team" &&
+            {currentPage === "teleop" && scoutingMode === "team" &&
                 <TeleopPage 
                 changePage={changePage} 
                 match={match}
@@ -151,7 +159,7 @@ export default function PageRenderer() {
 
             }
 
-            {currentPage === "final" && localStorage.getItem("scoutingMode") === "team" &&
+            {currentPage === "final" && scoutingMode === "team" &&
                 <FinalPage 
                 changePage={changePage} 
                 match={match}
@@ -159,14 +167,14 @@ export default function PageRenderer() {
                 />
             }
 
-            {localStorage.getItem("scoutingMode") === "alliance" &&
+            {scoutingMode === "alliance" &&
                 <AllianceSetupPage
                 allianceData={allianceData}
                 setAllianceData={setAllianceData}
                 />
             }
 
-            {localStorage.getItem("scoutingMode") === "pit" &&
+            {scoutingMode === "pit" &&
                 <PitSetupPage
                     pitData={pitData}
                     setPitData={setPitData}
