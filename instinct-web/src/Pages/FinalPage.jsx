@@ -24,7 +24,47 @@ export default function FinalPage({ match, setMatch, changePage }) {
     }
 
     async function save() {
+
+    try {
+
+        // Save match to IndexedDB
         await saveMatchData(match);
+
+            console.log("Match successfully saved!");
+
+            // Reset match data
+            setMatch({
+                matchID: "",
+                team: "",
+                alliance: localStorage.getItem("defaultAlliance") || "blue",
+
+                autoPoints: 0,
+                autoStartPosition: 0,
+                teleopPoints: 0,
+                teleopPassPoints: 0,
+
+                climb: "Did Not Attempt",
+                notes: "",
+                broke: "",
+                trench: "false",
+                exported: false
+            });
+
+            // Clear previously selected match ID
+            localStorage.removeItem("matchID");
+
+            // Return to setup page
+            localStorage.setItem("lastPageOpened", "setup");
+            changePage("setup");
+
+        } catch (error) {
+
+            console.error("Error saving match:", error);
+
+            alert("Failed to save match. Please try again.");
+
+        }
+
     }
 
     return (
